@@ -3,68 +3,136 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Terminal de Investigación | Jorge Luis Toral Gamez</title>
+    <title>Investigación & Arte | Jorge Toral</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=JetBrains+Mono&display=swap" rel="stylesheet">
     
+    <script>
+        // Lógica de detección de preferencia de color
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark')
+        } else {
+            document.documentElement.classList.remove('dark')
+        }
+
+        function toggleDarkMode() {
+            document.documentElement.classList.toggle('dark');
+            localStorage.theme = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
+        }
+    </script>
+
     <style>
+        :root {
+            /* Paleta Otoño Profundo - Modo Claro */
+            --bg-color: #FFF9F2; /* Hueso/Crema */
+            --sidebar-bg: #2C362E; /* Verde Bosque Profundo */
+            --sidebar-text: #E0D8C3; 
+            --text-main: #3E2723; /* Café Espresso */
+            --text-muted: #795548;
+            --accent: #A04523; /* Terracota */
+            --header-bg: rgba(255, 249, 242, 0.8);
+            --border: rgba(62, 39, 35, 0.1);
+        }
+
+        .dark {
+            /* Paleta Otoño Profundo - Modo Oscuro */
+            --bg-color: #1a1c1a; /* Negro pizarra verdoso */
+            --sidebar-bg: #0d110e;
+            --sidebar-text: #a4b3a7;
+            --text-main: #e0d8c3; /* Crema suave */
+            --text-muted: #a49d8c;
+            --accent: #d87d52; /* Óxido claro */
+            --header-bg: rgba(26, 28, 26, 0.8);
+            --border: rgba(224, 216, 195, 0.1);
+        }
+
         body { 
-            font-family: 'JetBrains Mono', monospace; 
-            background-color: #050505;
-            color: #00ff41; /* Verde Matrix/Terminal */
+            font-family: 'Inter', sans-serif; 
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            transition: background-color 0.3s, color 0.3s;
         }
-        .glow { box-shadow: 0 0 15px rgba(0, 255, 65, 0.2); border: 1px solid rgba(0, 255, 65, 0.5); }
-        .scanline {
-            width: 100%; height: 2px;
-            background: rgba(0, 255, 65, 0.1);
-            position: fixed; top: 0; left: 0;
-            z-index: 10; pointer-events: none;
-            animation: scan 8s linear infinite;
+
+        .mono { font-family: 'JetBrains Mono', monospace; }
+        
+        .prose-container {
+            max-width: 680px;
+            margin: 0 auto;
         }
-        @keyframes scan { from { top: 0; } to { top: 100%; } }
+
+        /* Utilidades personalizadas para las variables */
+        .sidebar-theme { background-color: var(--sidebar-bg); color: var(--sidebar-text); }
+        .border-theme { border-color: var(--border); }
+        .accent-text { color: var(--accent); }
     </style>
 </head>
-<body class="p-4 md:p-8">
-    <div class="scanline"></div>
+<body class="flex min-h-screen">
 
-    <main class="max-w-5xl mx-auto">
-        <header class="glow p-6 mb-6 flex flex-col md:flex-row justify-between items-center bg-black">
+    <aside class="w-64 p-8 flex flex-col fixed h-full sidebar-theme z-20 transition-colors duration-300">
+        <div class="mb-12">
+            <h1 class="font-bold text-xl tracking-tighter uppercase mb-1 text-white">Jorge Toral</h1>
+            <p class="text-[10px] mono opacity-50 tracking-widest">PHYSICS & DATA SCIENCE</p>
+        </div>
+
+        <nav class="flex-1 space-y-8 text-sm font-medium">
             <div>
-                <h1 class="text-2xl font-bold tracking-taller uppercase">Terminal_de_usuario: Jorge Luis Toral Gamez</h1>
-                <p class="text-xs opacity-70">STATUS: Estudiante de Física BUAP | Localizado: Puebla, MX</p>
+                <p class="text-[10px] mono opacity-30 uppercase mb-4 tracking-[0.2em] italic">Explorar</p>
+                <ul class="space-y-4">
+                    <li><a href="index.html" class="hover:text-white transition-colors flex items-center"><span>></span><span class="ml-2">Home</span></a></li>
+                    <li><a href="investigacion.html" class="hover:text-white transition-colors flex items-center"><span>></span><span class="ml-2">Investigación</span></a></li>
+                    <li><a href="pensamientos.html" class="hover:text-white transition-colors flex items-center"><span>></span><span class="ml-2">Pensamientos</span></a></li>
+                    <li><a href="arte.html" class="opacity-60 hover:text-[#d87d52] hover:opacity-100 transition-colors italic">Zona de Arte</a></li>
+                </ul>
             </div>
-            <div class="text-right mt-4 md:mt-0">
-                <p class="text-xs font-bold">FECHA: 2026-04-18</p>
-                <p class="text-xs text-blue-400">SISTEMA: Quantum-KAN Optimized</p>
+
+            <div>
+                <p class="text-[10px] mono opacity-30 uppercase mb-4 tracking-[0.2em] italic">Contacto</p>
+                <ul class="space-y-4">
+                    <li><a href="https://www.linkedin.com/in/jorge-luis-toral-gamez" class="opacity-60 hover:text-white transition-colors">LinkedIn</a></li>
+                    <li><a href="https://github.com/Jorge-1501" class="opacity-60 hover:text-white transition-colors">GitHub</a></li>
+                    <li><a href="#" class="opacity-60 hover:text-white transition-colors">CV (PDF)</a></li>
+                </ul>
             </div>
+        </nav>
+
+        <div class="pt-6 border-t border-white/10">
+            <button onclick="toggleDarkMode()" class="text-[10px] mono uppercase tracking-widest hover:text-white transition-all flex items-center">
+                <span class="dark:hidden">☾ Modo_Oscuro</span>
+                <span class="hidden dark:inline">☼ Modo_Claro</span>
+            </button>
+        </div>
+
+        <footer class="text-[10px] mono opacity-30 mt-6">
+            v1.0.4-2026
+        </footer>
+    </aside>
+
+    <main class="flex-1 ml-64 transition-colors duration-300">
+        <header class="h-16 flex justify-end items-center px-12 border-b border-theme sticky top-0 bg-[var(--header-bg)] backdrop-blur-md z-10 transition-colors duration-300">
+            <button class="text-[10px] mono font-bold border border-[var(--text-main)] px-3 py-1 hover:bg-[var(--text-main)] hover:text-[var(--bg-color)] transition-all">
+                EN / ES
+            </button>
         </header>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            
-            <section class="glow p-4 bg-black/50">
-                <h2 class="border-b border-green-500/50 mb-4 pb-2 text-sm font-bold uppercase">// Perfil_Académico</h2>
-                <ul class="text-sm space-y-2">
-                    <li><span class="text-blue-400">></span> Physics Undergrad</li>
-                    <li><span class="text-blue-400">></span> Data Science (TripleTen)</li>
-                    <li><span class="text-blue-400">></span> Dancer-Dance Instructor</li>
-                </ul>
-            </section>
+        <article class="py-20 px-8">
+            <div class="prose-container">
+                <header class="mb-12">
+                    <span class="mono text-xs accent-text uppercase tracking-[0.3em] font-bold">Ensayo // Física Teórica</span>
+                    <h2 class="text-4xl font-semibold mt-4 mb-6 leading-tight">Hacia la integración de Redes de Kolmogorov-Arnold en Sistemas Cuánticos</h2>
+                    <p class="text-[var(--text-muted)] italic text-sm">Publicado el 18 de Abril, 2026 · 8 min de lectura</p>
+                </header>
 
-            <section class="md:col-span-2 glow p-4 bg-black/50 relative overflow-hidden">
-                <h2 class="border-b border-green-500/50 mb-4 pb-2 text-sm font-bold uppercase">// Módulos_Activos</h2>
-                <div class="space-y-4">
-                    <div class="border border-green-500/30 p-3 hover:bg-green-500/10 transition-colors">
-                        <h3 class="text-blue-400 font-bold">PROYECTO: Jet_Classification</h3>
-                        <p class="text-xs mt-1">Análisis de datos de CMS/CERN usando GNNs.</p>
-                    </div>
-                    <div class="border border-green-500/30 p-3 hover:bg-green-500/10 transition-colors">
-                        <h3 class="text-blue-400 font-bold">RESEARCH: Quantum_KAN</h3>
-                        <p class="text-xs mt-1">Implementación de redes Kolmogorov-Arnold en computación cuántica.</p>
-                    </div>
+                <div class="text-lg leading-relaxed space-y-8 opacity-90">
+                    <p>
+                        La intersección entre el aprendizaje automático y la mecánica cuántica ha abierto una nueva frontera en el análisis de jets de partículas. En este ensayo exploramos cómo las <strong class="accent-text">Redes de Kolmogorov-Arnold (KAN)</strong> ofrecen una alternativa a los perceptrones multicapa tradicionales...
+                    </p>
+                    <p>
+                        A diferencia de las redes neuronales clásicas, donde las funciones de activación son fijas en los nodos, las KAN permiten que las funciones de activación sean aprendidas en las "aristas" del grafo, lo que proporciona una interpretabilidad matemática superior para fenómenos físicos.
+                    </p>
                 </div>
-            </section>
-
-        </div>
+            </div>
+        </article>
     </main>
+
 </body>
 </html>
