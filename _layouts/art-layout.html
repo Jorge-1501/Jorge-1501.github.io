@@ -72,6 +72,7 @@
     {%include sidebar.html %}
 
     <main class="flex-1 transition-all duration-500">
+
         <script>
             function toggleSidebar() {
             const sidebar = document.getElementById('main-sidebar');
@@ -90,34 +91,8 @@
             }
             }
         </script>
-        <header class="h-16 flex justify-end items-center px-12 border-b border-theme sticky top-0 bg-[var(--header-bg)] backdrop-blur-md z-10 transition-colors duration-300">
-            <button class="text-[10px] mono font-bold border border-[var(--text-main)] px-3 py-1 hover:bg-[var(--text-main)] hover:text-[var(--bg-color)] transition-all">
-                EN / ES
-            </button>
-        </header>
 
-        <section class="py-20 px-12 max-w-5xl mx-auto">
-            <div class="mb-20">
-                <h2 class="text-6xl font-bold tracking-tighter mb-6">Hola.</h2>
-                <p class="text-2xl leading-relaxed opacity-80 max-w-2xl">
-                    Soy un estudiante de física apasionado por cómo los algoritmos cuánticos pueden descifrar los misterios de las partículas subatómicas.
-                </p>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <a href="/ciencia_tec/investigacion.html" class="group border border-theme p-8 hover:bg-[var(--sidebar-bg)] hover:text-white transition-all duration-500">
-                    <span class="mono text-xs opacity-50 uppercase tracking-widest block mb-4">01 // Research</span>
-                    <h3 class="text-2xl font-semibold mb-2 italic">Quantum KAN & Jets</h3>
-                    <p class="text-sm opacity-70">Explora mi tesis sobre Redes de Kolmogorov-Arnold aplicadas a física de partículas.</p>
-                </a>
-
-                <a href="/arte.html" class="group border border-theme p-8 hover:bg-pink-900/20 hover:border-pink-500 transition-all duration-500">
-                    <span class="mono text-xs opacity-50 uppercase tracking-widest block mb-4">02 // Art</span>
-                    <h3 class="text-2xl font-semibold mb-2 italic">Kinetic Expression</h3>
-                    <p class="text-sm opacity-70">Danza contemporánea y ritmos latinos: el arte detrás del movimiento físico.</p>
-                </a>
-            </div>
-        </section>
+        {{ content }}
     </main>
 
 </body>
