@@ -1,0 +1,18 @@
+<script>
+    function toggleSidebar() {
+        const sidebar = document.getElementById('main-sidebar');
+        const overlay = document.getElementById('sidebar-overlay');
+        
+        if (sidebar.classList.contains('-translate-x-full')) {
+            // ABRIR
+            sidebar.classList.remove('-translate-x-full');
+            overlay.classList.remove('hidden');
+            setTimeout(() => overlay.classList.add('opacity-100'), 10);
+        } else {
+            // CERRAR
+            sidebar.classList.add('-translate-x-full');
+            overlay.classList.remove('opacity-100');
+            setTimeout(() => overlay.classList.add('hidden'), 500);
+        }
+    }
+</script>
