@@ -1,0 +1,4 @@
+collections:
+  clases:
+    output: true
+    permalink: /clases/:path/

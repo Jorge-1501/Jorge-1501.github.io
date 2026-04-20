@@ -15,4 +15,57 @@
             setTimeout(() => overlay.classList.add('hidden'), 500);
         }
     }
+
+    function toggleSubmenu(menuId) {
+        const menu = document.getElementById(menuId);
+        const arrow = document.getElementById('arrow-' + menuId);
+        
+        // Alternar la visibilidad de la lista
+        menu.classList.toggle('hidden');
+        
+        // Rotar la flecha para dar feedback visual
+        if (menu.classList.contains('hidden')) {
+            arrow.style.transform = 'rotate(0deg)';
+        } else {
+            arrow.style.transform = 'rotate(180deg)';
+        }
+    }
+</script>
+
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+<script>
+document.getElementById('courseSearch').addEventListener('keyup', function() {
+    // 1. Obtener el término de búsqueda y pasarlo a minúsculas
+    let searchTerm = this.value.toLowerCase();
+    
+    // 2. Seleccionar todas las tarjetas de curso
+    let cards = document.querySelectorAll('.course-card');
+    
+    cards.forEach(card => {
+        // Buscamos dentro del título (h4) y la descripción (p)
+        let title = card.querySelector('h4').innerText.toLowerCase();
+        let description = card.querySelector('p').innerText.toLowerCase();
+        
+        // 3. Lógica de visibilidad
+        if (title.includes(searchTerm) || description.includes(searchTerm)) {
+            card.style.display = "flex"; // Mostramos la tarjeta
+            card.style.opacity = "1";
+        } else {
+            card.style.display = "none"; // Ocultamos la tarjeta
+            card.style.opacity = "0";
+        }
+    });
+
+    // 4. (Opcional) Ocultar secciones de área vacías
+    document.querySelectorAll('section.mb-20').forEach(section => {
+        let visibleCards = section.querySelectorAll('.course-card[style*="display: flex"]');
+        if (visibleCards.length === 0 && searchTerm !== "") {
+            section.style.display = "none";
+        } else {
+            section.style.display = "block";
+        }
+    });
+});
 </script>

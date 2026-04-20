@@ -1,0 +1,104 @@
+---
+layout: default
+title: "Cursos y clases"
+---
+
+<div class="py-12 px-6 md:px-12 bg-[var(--bg-color)]">
+    <div class="mb-12">
+        <h2 class="text-4xl font-bold tracking-tighter uppercase mb-2">Cursos</h2>
+        <p class="mono text-[10px] opacity-50 tracking-[0.3em] uppercase">Explora mis cursos de física, matemáticas y computación</p>
+    </div>
+
+    <div class="mb-16 max-w-xl">
+        <div class="relative group">
+            <input type="text" id="courseSearch" placeholder="Buscar materia o concepto..." 
+                class="w-full bg-[var(--bg-hueso)] border border-theme p-4 pl-12 text-sm mono 
+                        focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)]/30
+                        transition-all shadow-sm">
+            
+            <span class="absolute left-4 top-4 opacity-30 transition-all duration-300 pointer-events-none
+                        group-focus-within:opacity-100 group-focus-within:text-[var(--accent)] group-focus-within:scale-110">
+                🔍
+            </span>
+        </div>
+        
+        <p id="search-results-count" class="mono text-[9px] mt-2 opacity-40 uppercase tracking-widest hidden">
+            Mostrando resultados...
+        </p>
+    </div>
+
+    {% assign areas = site.clases | group_by: "area" %}
+    
+    {% for area in areas %}
+    <section class="mb-20">
+        <div class="flex items-center justify-between mb-8 border-b border-theme pb-2">
+            <h3 class="text-lg font-bold italic uppercase tracking-tighter">{{ area.name }}</h3>
+            <span class="mono text-[10px] opacity-40">
+                {% assign cursos_unicos = area.items | group_by: "curso" %}
+                {{ cursos_unicos.size }} CURSOS DISPONIBLES
+            </span>
+        </div>
+
+        <div class="flex gap-8 overflow-x-auto pb-10 scroll-hide snap-x shadow-inner">
+            {% assign cursos_en_area = area.items | group_by: "curso" %}
+            
+            {% for grupo_curso in cursos_en_area %}
+                {% comment %} 
+                Tomamos la primera lección del grupo para extraer los metadatos del curso 
+                {% endcomment %}
+                {% assign info_curso = grupo_curso.items | first %}
+                
+                <div class="course-card min-w-[320px] md:min-w-[380px] bg-[var(--sidebar-bg)] border border-white/10 p-8 flex flex-col justify-between transform transition-all duration-500 hover:-translate-y-4 hover:shadow-[0_20px_50px_rgba(0,0,0,0.5)] group relative snap-start overflow-hidden">
+                    
+                    <div class="absolute top-0 right-0 w-16 h-16 bg-white/5 -rotate-45 translate-x-8 -translate-y-8 group-hover:bg-[var(--accent)]/20 transition-colors"></div>
+
+                    <div>
+                        <div class="flex justify-between items-start mb-6">
+                            <span class="mono text-[9px] px-2 py-1 border border-[var(--accent)] text-[var(--accent)] uppercase tracking-widest">
+                                {{ info_curso.nivel | default: "Pregrado" }}
+                            </span>
+                            <span class="text-white/20 group-hover:text-white transition-colors text-xl">⌬</span>
+                        </div>
+                        
+                        <h4 class="text-2xl font-bold text-white leading-tight mb-4 group-hover:text-[var(--accent)] transition-colors">
+                            {{ grupo_curso.name }}
+                        </h4>
+                        
+                        <p class="text-sm text-white/60 leading-relaxed line-clamp-3">
+                            {{ info_curso.description }}
+                        </p>
+                    </div>
+
+                    <div class="mt-8 pt-6 border-t border-white/5 flex justify-between items-center">
+                        <div class="flex flex-col">
+                            <span class="text-[9px] mono opacity-40 uppercase">Estatus</span>
+                            <span class="text-[10px] text-white mono uppercase tracking-widest">{{ info_curso.estatus }}</span>
+                        </div>
+
+                        {% comment %} 
+                        Buscamos la clase con orden 1 para que el botón de "Entrar" 
+                        siempre inicie el curso desde el principio.
+                        {% endcomment %}
+                        {% assign primera_clase = grupo_curso.items | where: "orden", 1 | first %}
+                        <a href="{{ primera_clase.url | default: info_curso.url }}" class="bg-white text-black px-4 py-2 text-[10px] mono font-bold uppercase hover:bg-[var(--accent)] hover:text-white transition-all">
+                            Entrar
+                        </a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+    {% endfor %}
+</div>
+
+<style>
+    /* Ocultar scrollbar para estética limpia */
+    .scroll-hide::-webkit-scrollbar { display: none; }
+    .scroll-hide { -ms-overflow-style: none; scrollbar-width: none; }
+    
+    /* Efecto de desenfoque al fondo para resaltar las ventanas */
+    .course-card {
+        backdrop-filter: blur(5px);
+        border-radius: 2px;
+    }
+</style>
