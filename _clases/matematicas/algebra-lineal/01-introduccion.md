@@ -4,6 +4,7 @@ title: "Espacios vectoriales"
 area: "Matemáticas"
 curso: "Álgebra lineal"
 nivel: "universitario"
+capitulo: "Espacios vectoriales"
 orden: 2
 estatus: "En curso"
 banner: "/assets/img/banners/algebra-lineal.jpg"

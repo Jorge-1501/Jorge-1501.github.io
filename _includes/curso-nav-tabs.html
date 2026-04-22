@@ -1,0 +1,49 @@
+<nav class="sticky top-16 z-50 w-full bg-[var(--bg-color)] border-b border-theme px-8 md:px-20 py-4 shadow-sm">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+            <p class="mono text-[10px] opacity-40 uppercase tracking-widest">{{ page.area }}</p>
+            <h2 class="text-xl font-bold italic text-[var(--text-main)]">{{ page.curso }}</h2>
+        </div>
+
+        <div class="flex bg-black/10 dark:bg-black/40 p-1 rounded-full border border-theme self-start md:self-center">
+            {% assign es_flujo = false %}
+            {% if page.layout == "capitulo-flujo" %}{% assign es_flujo = true %}{% endif %}
+
+            {% assign primera_leccion = site.clases | where: "curso", page.curso | where: "capitulo", page.capitulo | sort: "orden" | first %}
+            
+            <a href="{{ primera_leccion.url | relative_url }}" 
+            class="px-3 py-1.5 flex items-center gap-2 text-[9px] mono uppercase rounded-full transition-all 
+            {% unless es_flujo %}bg-[var(--accent)] text-white shadow-lg{% else %}opacity-50 hover:opacity-100{% endunless %}">
+                <span>📄</span> <span class="hidden sm:inline">Enfoque</span>
+            </a>
+
+            {% assign pagina_flujo = site.pages | where: "layout", "capitulo-flujo" | where: "curso", page.curso | where: "capitulo", page.capitulo | first %}
+            
+            {% if pagina_flujo %}
+                <a href="{{ pagina_flujo.url | relative_url }}" 
+                class="px-3 py-1.5 flex items-center gap-2 text-[9px] mono uppercase rounded-full transition-all
+                {% if es_flujo %}bg-[var(--accent)] text-white shadow-lg{% else %}opacity-50 hover:opacity-100{% endif %}">
+                    <span>📖</span> <span class="hidden sm:inline">Flujo</span>
+                </a>
+            {% else %}
+                <span class="px-3 py-1.5 opacity-20 text-[9px] mono uppercase">📖 Sin Flujo</span>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="flex gap-6 overflow-x-auto scroll-hide mt-4 border-t border-theme pt-3">
+        {% assign clases_curso = site.clases | where: "curso", page.curso %}
+        {% assign capitulos = clases_curso | group_by: "capitulo" %}
+        {% for cap in capitulos %}
+            {% assign primera = cap.items | sort: "orden" | first %}
+            <a href="{{ primera.url | relative_url }}" class="relative pb-2 group whitespace-nowrap">
+                <span class="text-[10px] mono uppercase {% if cap.name == page.capitulo %}text-[var(--accent)] font-bold{% else %}opacity-40{% endif %}">
+                    {{ cap.name }}
+                </span>
+                {% if cap.name == page.capitulo %}
+                    <div class="absolute bottom-0 left-0 w-full h-0.5 bg-[var(--accent)]"></div>
+                {% endif %}
+            </a>
+        {% endfor %}
+    </div>
+</nav>

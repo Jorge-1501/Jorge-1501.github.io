@@ -4,6 +4,7 @@ title: "Introducción a la mecánica clásica"
 area: "Física"
 nivel: "universitario"
 curso: "Mecánica clásica I"
+capitulo: "Introducción"
 estatus: "En curso"
 orden: 1
 banner: "/assets/img/banners/mecanica_i.jpg"

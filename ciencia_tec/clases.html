@@ -35,7 +35,7 @@ title: "Cursos y clases"
             <h3 class="text-lg font-bold italic uppercase tracking-tighter">{{ area.name }}</h3>
             <span class="mono text-[10px] opacity-40">
                 {% assign cursos_unicos = area.items | group_by: "curso" %}
-                {{ cursos_unicos.size }} CURSOS DISPONIBLES
+                {{ cursos_unicos.size }} CURSO(S) DISPONIBLE(S)
             </span>
         </div>
 

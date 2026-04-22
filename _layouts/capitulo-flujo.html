@@ -1,0 +1,21 @@
+---
+layout: default
+---
+<div id="progress-bar" class="fixed top-0 left-0 h-0.5 bg-[var(--accent)] z-50 transition-all duration-150" style="width: 0%"></div>
+
+<div class="min-h-screen bg-[var(--bg-color)]">
+    {% include curso-nav-tabs.html %}
+
+    <div class="max-w-4xl mx-auto py-16 px-6 md:px-20">
+        <div class="space-y-32">
+            {% assign lecciones = site.clases | where: "curso", page.curso | where: "capitulo", page.capitulo | sort: "orden" %}
+            {% for leccion in lecciones %}
+                <section id="{{ leccion.title | slugify }}" class="prose prose-invert max-w-none border-b border-white/5 pb-20">
+                    <span class="mono text-[10px] text-[var(--accent)] tracking-[0.3em] uppercase">Lección {{ forloop.index }}</span>
+                    <h2 class="text-4xl font-bold mt-2 mb-10">{{ leccion.title }}</h2>
+                    {{ leccion.content }}
+                </section>
+            {% endfor %}
+        </div>
+    </div>
+</div>

@@ -69,3 +69,23 @@ document.getElementById('courseSearch').addEventListener('keyup', function() {
     });
 });
 </script>
+
+<script>
+    // Detectar si es móvil
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    
+    // Si el usuario no tiene una preferencia guardada, asignamos la predeterminada
+    if (!localStorage.getItem('readingMode')) {
+        localStorage.setItem('readingMode', isMobile ? 'enfoque' : 'flujo');
+    }
+</script>
+
+
+<script>
+    window.onscroll = function() {
+    let winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+    let height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+    let scrolled = (winScroll / height) * 100;
+    document.getElementById("progress-bar").style.width = scrolled + "%";
+    };
+</script>

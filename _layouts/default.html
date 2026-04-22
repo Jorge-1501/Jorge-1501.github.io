@@ -9,7 +9,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=JetBrains+Mono&display=swap" rel="stylesheet">
     
     <script>
-        // Lógica de detección de preferencia de color
         if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
             document.documentElement.classList.add('dark')
         } else {
@@ -24,25 +23,23 @@
 
     <style>
         :root {
-            /* Paleta Otoño Profundo - Modo Claro */
-            --bg-color: #FFF9F2; /* Hueso/Crema */
-            --sidebar-bg: #2C362E; /* Verde Bosque Profundo */
+            --bg-color: #FFF9F2; 
+            --sidebar-bg: #2C362E; 
             --sidebar-text: #E0D8C3; 
-            --text-main: #3E2723; /* Café Espresso */
+            --text-main: #3E2723; 
             --text-muted: #795548;
-            --accent: #A04523; /* Terracota */
+            --accent: #A04523; 
             --header-bg: rgba(255, 249, 242, 0.8);
             --border: rgba(62, 39, 35, 0.1);
         }
 
         .dark {
-            /* Paleta Otoño Profundo - Modo Oscuro */
-            --bg-color: #1a1c1a; /* Negro pizarra verdoso */
+            --bg-color: #1a1c1a; 
             --sidebar-bg: #0d110e;
             --sidebar-text: #a4b3a7;
-            --text-main: #e0d8c3; /* Crema suave */
+            --text-main: #e0d8c3; 
             --text-muted: #a49d8c;
-            --accent: #d87d52; /* Óxido claro */
+            --accent: #d87d52; 
             --header-bg: rgba(26, 28, 26, 0.8);
             --border: rgba(224, 216, 195, 0.1);
         }
@@ -55,13 +52,7 @@
         }
 
         .mono { font-family: 'JetBrains Mono', monospace; }
-        
-        .prose-container {
-            max-width: 680px;
-            margin: 0 auto;
-        }
-
-        /* Utilidades personalizadas para las variables */
+        .prose-container { max-width: 680px; margin: 0 auto; }
         .sidebar-theme { background-color: var(--sidebar-bg); color: var(--sidebar-text); }
         .border-theme { border-color: var(--border); }
         .accent-text { color: var(--accent); }
@@ -69,28 +60,27 @@
 </head>
 <body class="flex min-h-screen">
 
-    {%include sidebar.html %}
+    {% include sidebar.html %}
 
     <main class="flex-1 transition-all duration-500">
         <script>
             function toggleSidebar() {
-            const sidebar = document.getElementById('main-sidebar');
-            const overlay = document.getElementById('sidebar-overlay');
-            
-            if (sidebar.classList.contains('-translate-x-full')) {
-                // ABRIR
-                sidebar.classList.remove('-translate-x-full');
-                overlay.classList.remove('hidden');
-                setTimeout(() => overlay.classList.add('opacity-100'), 10);
-            } else {
-                // CERRAR
-                sidebar.classList.add('-translate-x-full');
-                overlay.classList.remove('opacity-100');
-                setTimeout(() => overlay.classList.add('hidden'), 500);
-            }
+                const sidebar = document.getElementById('main-sidebar');
+                const overlay = document.getElementById('sidebar-overlay');
+                
+                if (sidebar.classList.contains('-translate-x-full')) {
+                    sidebar.classList.remove('-translate-x-full');
+                    overlay.classList.remove('hidden');
+                    setTimeout(() => overlay.classList.add('opacity-100'), 10);
+                } else {
+                    sidebar.classList.add('-translate-x-full');
+                    overlay.classList.remove('opacity-100');
+                    setTimeout(() => overlay.classList.add('hidden'), 500);
+                }
             }
         </script>
-        <header class="h-16 flex justify-end items-center px-12 border-b border-theme sticky top-0 bg-[var(--header-bg)] backdrop-blur-md z-10 transition-colors duration-300">
+
+        <header class="h-16 flex justify-end items-center px-12 border-b border-theme sticky top-0 bg-[var(--header-bg)] backdrop-blur-md z-40 transition-colors duration-300">
             <button class="text-[10px] mono font-bold border border-[var(--text-main)] px-3 py-1 hover:bg-[var(--text-main)] hover:text-[var(--bg-color)] transition-all">
                 EN / ES
             </button>
@@ -101,5 +91,4 @@
 
 </body>
 </html>
-
 {% include scripts.html %}
