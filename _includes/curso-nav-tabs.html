@@ -32,15 +32,33 @@
     </div>
 
     <div class="flex gap-6 overflow-x-auto scroll-hide mt-4 border-t border-theme pt-3">
-        {% assign clases_curso = site.clases | where: "curso", page.curso %}
-        {% assign capitulos = clases_curso | group_by: "capitulo" %}
-        {% for cap in capitulos %}
-            {% assign primera = cap.items | sort: "orden" | first %}
+        {% comment %} 
+        Detección dinámica: Si existe 'proyecto', busca en investigacion. 
+        Si no, busca en clases.
+        {% endcomment %}
+        
+        {% if page.proyecto %}
+            {% assign items_para_navegar = site.investigacion | where: "proyecto", page.proyecto %}
+            {% assign llave_agrupadora = "seccion" %}
+        {% else %}
+            {% assign items_para_navegar = site.clases | where: "curso", page.curso %}
+            {% assign llave_agrupadora = "capitulo" %}
+        {% endif %}
+
+        {% assign grupos = items_para_navegar | group_by: llave_agrupadora %}
+        
+        {% for grupo in grupos %}
+            {% assign primera = grupo.items | sort: "orden" | first %}
             <a href="{{ primera.url | relative_url }}" class="relative pb-2 group whitespace-nowrap">
-                <span class="text-[10px] mono uppercase {% if cap.name == page.capitulo %}text-[var(--accent)] font-bold{% else %}opacity-40{% endif %}">
-                    {{ cap.name }}
+                <span class="text-[10px] mono uppercase 
+                    {% if grupo.name == page.capitulo or grupo.name == page.seccion %}
+                        text-[var(--accent)] font-bold
+                    {% else %}
+                        opacity-40
+                    {% endif %}">
+                    {{ grupo.name }}
                 </span>
-                {% if cap.name == page.capitulo %}
+                {% if grupo.name == page.capitulo or grupo.name == page.seccion %}
                     <div class="absolute bottom-0 left-0 w-full h-0.5 bg-[var(--accent)]"></div>
                 {% endif %}
             </a>
