@@ -9,13 +9,13 @@ layout: default
         
         <aside id="sidebar-lecciones" class="w-full md:w-64 p-8 border-r border-theme bg-black/5 md:sticky md:top-32 md:h-[calc(100vh-8rem)] overflow-y-auto hidden md:block z-30 transition-transform duration-300">
             <p class="mono text-[9px] opacity-30 uppercase mb-6 italic font-bold text-[var(--text-main)]">
-                Módulos del Proyecto
+                Módulos del proyecto
             </p>
             
             <ul class="space-y-4">
-                {% assign módulos = site.investigacion | where: "proyecto", page.proyecto | sort: "orden" %}
+                {% assign modulos = site.investigacion | where: "proyecto", page.proyecto | sort: "orden" %}
 
-                {% for modulo in módulos %}
+                {% for modulo in modulos %}
                     {% comment %} 
                        FILTRO DE SEGURIDAD: 
                        Solo mostramos si el nombre del proyecto coincide exactamente 

@@ -5,6 +5,7 @@ proyecto: "Mi gran proyecto"
 seccion: "Introducción"
 area: "Interdisciplinarios"
 tipo: "macro"
+description: "Esta es una prueba para shor"
 ---
 # Hola mundo cuántico
 
