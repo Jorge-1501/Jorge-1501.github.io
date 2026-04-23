@@ -2,3 +2,6 @@ collections:
   clases:
     output: true
     permalink: /clases/:path/
+  investigacion:
+    output: true
+    permalink: /investigacion/:path/

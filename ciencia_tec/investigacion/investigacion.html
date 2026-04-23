@@ -1,0 +1,97 @@
+---
+layout: default
+title: "Investigación"
+---
+
+<div class="py-12 px-6 md:px-12 bg-[var(--bg-color)]">
+    <div class="mb-12">
+        <h2 class="text-4xl font-bold tracking-tighter uppercase mb-2">Investigación</h2>
+        <p class="mono text-[10px] opacity-50 tracking-[0.3em] uppercase">Explora mis proyectos de física, Q-ML e investigación interdisciplinaria</p>
+    </div>
+
+    <div class="mb-16 max-w-xl">
+        <div class="relative group">
+            <input type="text" id="projectSearch" placeholder="Buscar proyecto, tecnología o concepto..." 
+                class="w-full bg-[var(--bg-hueso)] border border-theme p-4 pl-12 text-sm mono 
+                        focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)]/30
+                        transition-all shadow-sm">
+            <span class="absolute left-4 top-4 opacity-30 transition-all duration-300 pointer-events-none
+                        group-focus-within:opacity-100 group-focus-within:text-[var(--accent)] group-focus-within:scale-110">
+                🔍
+            </span>
+        </div>
+    </div>
+
+    {% assign areas_investigacion = site.investigacion | group_by: "area" %}
+    
+    {% for area in areas_investigacion %}
+    <section class="mb-20">
+        <div class="flex items-center justify-between mb-8 border-b border-theme pb-2">
+            <h3 class="text-lg font-bold italic uppercase tracking-tighter">{{ area.name }}</h3>
+            <span class="mono text-[10px] opacity-40">
+                {% assign proyectos_unicos = area.items | group_by: "proyecto" %}
+                {{ proyectos_unicos.size }} PROYECTO(S)
+            </span>
+        </div>
+
+        <div class="flex gap-8 overflow-x-auto pb-10 scroll-hide snap-x">
+            {% assign proyectos_en_area = area.items | group_by: "proyecto" %}
+            
+            {% for grupo_proyecto in proyectos_en_area %}
+                {% comment %} 
+                    Tomamos el primer módulo para extraer metadatos del proyecto 
+                {% endcomment %}
+                {% assign info_proyecto = grupo_proyecto.items | first %}
+                
+                <div class="project-card min-w-[320px] md:min-w-[380px] bg-[var(--sidebar-bg)] border border-white/10 p-8 flex flex-col justify-between transform transition-all duration-500 hover:-translate-y-4 hover:shadow-[0_20px_50px_rgba(0,0,0,0.5)] group relative snap-start overflow-hidden">
+                    
+                    <div class="absolute top-0 right-0 w-16 h-16 bg-white/5 -rotate-45 translate-x-8 -translate-y-8 group-hover:bg-[var(--accent)]/20 transition-colors"></div>
+
+                    <div>
+                        <div class="flex justify-between items-start mb-6">
+                            <span class="mono text-[9px] px-2 py-1 border border-[var(--accent)] text-[var(--accent)] uppercase tracking-widest">
+                                {{ info_proyecto.tipo | default: "Macro" }}
+                            </span>
+                            <span class="text-white/20 group-hover:text-white transition-colors text-xl">
+                                {% if area.name == "Interdisciplinarios" %}⬡{% else %}⌬{% endif %}
+                            </span>
+                        </div>
+                        
+                        <h4 class="text-2xl font-bold text-white leading-tight mb-4 group-hover:text-[var(--accent)] transition-colors">
+                            {{ grupo_proyecto.name }}
+                        </h4>
+                        
+                        <p class="text-sm text-white/60 leading-relaxed line-clamp-3">
+                            {{ info_proyecto.description | default: "Investigación en curso sobre modelos avanzados y computación científica." }}
+                        </p>
+                    </div>
+
+                    <div class="mt-8 pt-6 border-t border-white/5 flex justify-between items-center">
+                        <div class="flex flex-col">
+                            <span class="text-[9px] mono opacity-40 uppercase">Estatus</span>
+                            <span class="text-[10px] text-white mono uppercase tracking-widest">{{ info_proyecto.estatus | default: "En desarrollo" }}</span>
+                        </div>
+
+                        {% comment %} 
+                           Buscamos el módulo con orden 1 o usamos la URL del archivo si es Micro
+                        {% endcomment %}
+                        {% assign primer_modulo = grupo_proyecto.items | where: "orden", 1 | first %}
+                        <a href="{{ primer_modulo.url | default: info_proyecto.url | relative_url }}" class="bg-white text-black px-4 py-2 text-[10px] mono font-bold uppercase hover:bg-[var(--accent)] hover:text-white transition-all">
+                            Ver Proyecto
+                        </a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+    {% endfor %}
+</div>
+
+<style>
+    .scroll-hide::-webkit-scrollbar { display: none; }
+    .scroll-hide { -ms-overflow-style: none; scrollbar-width: none; }
+    .project-card {
+        backdrop-filter: blur(5px);
+        border-radius: 2px;
+    }
+</style>
