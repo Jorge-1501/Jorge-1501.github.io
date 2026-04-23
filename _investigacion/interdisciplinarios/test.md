@@ -7,3 +7,5 @@ area: "Interdisciplinarios"
 tipo: "macro"
 ---
 # Hola mundo cuántico
+
+En esta sección trabajaremos con el algoritmo de shor.

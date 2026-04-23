@@ -12,22 +12,31 @@ layout: default
                 {%if page.proyecto %}Módulos{% else %}Lecciones{% endif %}
             </p>
             <ul class="space-y-4">
+                {% assign items_sidebar = nil %}
+
                 {% if page.proyecto %}
                     {%assign items_sidebar = site.investigacion | where: "proyecto", page.proyecto | sort: "orden" %}
-                {% else %}
+                {%elsif page.curso %}
                     {% assign items_sidebar = site.clases | where: "curso", page.curso | where: "capitulo", page.capitulo | sort: "orden" %}
                 {% endif %}
+
                 {% for leccion in items_sidebar %}
-                    <li>
-                        <a href="{{ leccion.url | relative_url }}" class="text-sm flex items-start group">
-                            <span class="mono text-[10px] mr-3 {% if leccion.url == page.url %}text-[var(--accent)]{% else %}opacity-30{% endif %}">
-                                {{ forloop.index | prepend: '0' | slice: -2, 2 }}
-                            </span>
-                            <span class="{% if leccion.url == page.url %}text-[var(--accent)] font-bold{% else %}text-[var(--text-main)] opacity-60 group-hover:opacity-100{% endif %} transition-all">
-                                {{ leccion.title }}
-                            </span>
-                        </a>
-                    </li>
+                    {% assign match = false %}
+                    {% if page.proyecto and leccion.proyecto == page.proyecto %}{% assign match = true %}{% endif %}
+                    {% if page.curso and leccion.curso == page.curso %}{% assign match = true %}{% endif %}
+
+                    {% if match %}
+                        <li>
+                            <a href="{{ leccion.url | relative_url }}" class="text-sm flex items-start group">
+                                <span class="mono text-[10px] mr-3 {% if leccion.url == page.url %}text-[var(--accent)]{% else %}opacity-30{% endif %}">
+                                    {{ forloop.index | prepend: '0' | slice: -2, 2 }}
+                                </span>
+                                <span class="{% if leccion.url == page.url %}text-[var(--accent)] font-bold{% else %}text-[var(--text-main)] opacity-60 group-hover:opacity-100{% endif %} transition-all">
+                                    {{ leccion.title }}
+                                </span>
+                            </a>
+                        </li>
+                    {% endif %}
                 {% endfor %}
             </ul>
         </aside>
