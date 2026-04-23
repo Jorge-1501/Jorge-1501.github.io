@@ -7,9 +7,14 @@
 
         <div class="flex bg-black/10 dark:bg-black/40 p-1 rounded-full border border-theme self-start md:self-center">
             {% assign es_flujo = false %}
-            {% if page.layout == "capitulo-flujo" %}{% assign es_flujo = true %}{% endif %}
+            {% if page.layout == "capitulo-flujo" or page.layout == "proyecto-flujo" %}{% assign es_flujo = true %}{% endif %}
 
-            {% assign primera_leccion = site.clases | where: "curso", page.curso | where: "capitulo", page.capitulo | sort: "orden" | first %}
+            {%comment%} Buscamos la primera pieza de contenido (orden 1) en la colección correcta {% endcomment %}
+            {% if page.proyecto %}
+                {% assign primera_leccion = site.investigacion | where: "proyecto", page.proyecto | sort: "orden" | first %}
+            {% else %}
+                {% assign primera_leccion = site.clases | where: "curso", page.curso | where: "capitulo", page.capitulo | sort: "orden" | first %}
+            {% endif %}
             
             <a href="{{ primera_leccion.url | relative_url }}" 
             class="px-3 py-1.5 flex items-center gap-2 text-[9px] mono uppercase rounded-full transition-all 
@@ -17,7 +22,12 @@
                 <span>📄</span> <span class="hidden sm:inline">Enfoque</span>
             </a>
 
-            {% assign pagina_flujo = site.pages | where: "layout", "capitulo-flujo" | where: "curso", page.curso | where: "capitulo", page.capitulo | first %}
+            {% comment %} El botón de Flujo busca el archivo .html manualmente {% endcomment %}
+            {% if page.proyecto %}
+                {% assign pagina_flujo = site.pages | where: "proyecto", page.proyecto | first %}
+            {% else %}
+                {% assign pagina_flujo = site.pages | where: "layout", "capitulo-flujo" | where: "curso", page.curso | where: "capitulo", page.capitulo | first %}
+            {% endif %}
             
             {% if pagina_flujo %}
                 <a href="{{ pagina_flujo.url | relative_url }}" 
