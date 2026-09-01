@@ -1,0 +1,51 @@
+nav:
+  menu: "Menu"
+  brand_name: "Jorge Toral"
+  brand_tagline: "Physics & data science"
+  explore: "Explore"
+  inicio: "Home"
+  sobre_mi: "About me"
+  ciencia_tec: "Science & tech"
+  tutoriales: "Tutorials / Courses"
+  investigacion: "Research"
+  blog: "Blog"
+  arte: "Art Zone"
+  contacto: "Contact"
+  cv: "CV (PDF)"
+  dark_mode: "Dark_Mode"
+  light_mode: "Light_Mode"
+  lang_switch: "ES"
+
+cursos:
+  title: "Courses"
+  subtitle: "Explore my physics, math and computer science courses"
+  search_placeholder: "Search a subject or concept..."
+  showing_results: "Showing results..."
+  courses_available: "COURSE(S) AVAILABLE"
+  status_label: "Status"
+  enter_button: "Enter"
+  default_level: "Undergraduate"
+  modulos: "Modules"
+  lecciones: "Lessons"
+
+investigacion:
+  title: "Research"
+  subtitle: "Explore my physics, Q-ML and interdisciplinary research projects"
+  search_placeholder: "Search a project, technology or concept..."
+  projects_label: "PROJECT(S)"
+  status_label: "Status"
+  view_project: "View Project"
+  default_type: "Macro"
+  default_status: "In progress"
+  default_description: "Ongoing research on advanced models and scientific computing."
+  modulos_proyecto: "Project modules"
+
+nav_tabs:
+  enfoque: "Focus"
+  flujo: "Flow"
+  sin_flujo: "No Flow"
+
+placeholder:
+  title: "Coming soon"
+  message: "This content is currently being worked on. Please check back soon."
+  back_home: "Back to home"

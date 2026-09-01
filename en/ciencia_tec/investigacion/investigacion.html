@@ -1,7 +1,7 @@
 ---
 layout: default
-title: "Investigación"
-lang_alt_url: /en/ciencia_tec/investigacion/investigacion.html
+title: "Research"
+lang_alt_url: /ciencia_tec/investigacion/investigacion.html
 ---
 
 <div class="py-12 px-6 md:px-12 bg-[var(--bg-color)]">
@@ -26,8 +26,8 @@ lang_alt_url: /en/ciencia_tec/investigacion/investigacion.html
     {% capture t_default_type %}{% include t.html section="investigacion" key="default_type" %}{% endcapture %}
     {% capture t_default_status %}{% include t.html section="investigacion" key="default_status" %}{% endcapture %}
     {% capture t_default_description %}{% include t.html section="investigacion" key="default_description" %}{% endcapture %}
-    {% assign areas_investigacion = site.investigacion | group_by: "area" %}
-    
+    {% assign areas_investigacion = site.investigacion_en | group_by: "area" %}
+
     {% for area in areas_investigacion %}
     <section class="mb-20">
         <div class="flex items-center justify-between mb-8 border-b border-theme pb-2">
@@ -40,15 +40,12 @@ lang_alt_url: /en/ciencia_tec/investigacion/investigacion.html
 
         <div class="flex gap-8 overflow-x-auto pb-10 scroll-hide snap-x">
             {% assign proyectos_en_area = area.items | group_by: "proyecto" %}
-            
+
             {% for grupo_proyecto in proyectos_en_area %}
-                {% comment %} 
-                    Tomamos el primer módulo para extraer metadatos del proyecto 
-                {% endcomment %}
                 {% assign info_proyecto = grupo_proyecto.items | first %}
-                
+
                 <div class="project-card min-w-[320px] md:min-w-[380px] bg-[var(--sidebar-bg)] border border-white/10 p-8 flex flex-col justify-between transform transition-all duration-500 hover:-translate-y-4 hover:shadow-[0_20px_50px_rgba(0,0,0,0.5)] group relative snap-start overflow-hidden">
-                    
+
                     <div class="absolute top-0 right-0 w-16 h-16 bg-white/5 -rotate-45 translate-x-8 -translate-y-8 group-hover:bg-[var(--accent)]/20 transition-colors"></div>
 
                     <div>
@@ -57,14 +54,14 @@ lang_alt_url: /en/ciencia_tec/investigacion/investigacion.html
                                 {{ info_proyecto.tipo | default: t_default_type }}
                             </span>
                             <span class="text-white/20 group-hover:text-white transition-colors text-xl">
-                                {% if area.name == "Interdisciplinarios" %}⬡{% else %}⌬{% endif %}
+                                {% if area.name == "Interdisciplinary" %}⬡{% else %}⌬{% endif %}
                             </span>
                         </div>
-                        
+
                         <h4 class="text-2xl font-bold text-white leading-tight mb-4 group-hover:text-[var(--accent)] transition-colors">
                             {{ grupo_proyecto.name }}
                         </h4>
-                        
+
                         <p class="text-sm text-white/60 leading-relaxed line-clamp-3">
                             {{ info_proyecto.description | default: t_default_description }}
                         </p>
@@ -76,9 +73,6 @@ lang_alt_url: /en/ciencia_tec/investigacion/investigacion.html
                             <span class="text-[10px] text-white mono uppercase tracking-widest">{{ info_proyecto.estatus | default: t_default_status }}</span>
                         </div>
 
-                        {% comment %}
-                           Buscamos el módulo con orden 1 o usamos la URL del archivo si es Micro
-                        {% endcomment %}
                         {% assign primer_modulo = grupo_proyecto.items | where: "orden", 1 | first %}
                         <a href="{{ primer_modulo.url | default: info_proyecto.url | relative_url }}" class="bg-white text-black px-4 py-2 text-[10px] mono font-bold uppercase hover:bg-[var(--accent)] hover:text-white transition-all">
                             {% include t.html section="investigacion" key="view_project" %}

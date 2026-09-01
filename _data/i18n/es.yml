@@ -1,0 +1,51 @@
+nav:
+  menu: "Menú"
+  brand_name: "Jorge Toral"
+  brand_tagline: "Física & ciencia de datos"
+  explore: "Explorar"
+  inicio: "Inicio"
+  sobre_mi: "Sobre mí"
+  ciencia_tec: "Ciencia y tecnología"
+  tutoriales: "Tutoriales / Cursos"
+  investigacion: "Investigación"
+  blog: "Blog"
+  arte: "Zona de Arte"
+  contacto: "Contacto"
+  cv: "CV (PDF)"
+  dark_mode: "Modo_Oscuro"
+  light_mode: "Modo_Claro"
+  lang_switch: "EN"
+
+cursos:
+  title: "Cursos"
+  subtitle: "Explora mis cursos de física, matemáticas y computación"
+  search_placeholder: "Buscar materia o concepto..."
+  showing_results: "Mostrando resultados..."
+  courses_available: "CURSO(S) DISPONIBLE(S)"
+  status_label: "Estatus"
+  enter_button: "Entrar"
+  default_level: "Pregrado"
+  modulos: "Módulos"
+  lecciones: "Lecciones"
+
+investigacion:
+  title: "Investigación"
+  subtitle: "Explora mis proyectos de física, Q-ML e investigación interdisciplinaria"
+  search_placeholder: "Buscar proyecto, tecnología o concepto..."
+  projects_label: "PROYECTO(S)"
+  status_label: "Estatus"
+  view_project: "Ver Proyecto"
+  default_type: "Macro"
+  default_status: "En desarrollo"
+  default_description: "Investigación en curso sobre modelos avanzados y computación científica."
+  modulos_proyecto: "Módulos del proyecto"
+
+nav_tabs:
+  enfoque: "Enfoque"
+  flujo: "Flujo"
+  sin_flujo: "Sin Flujo"
+
+placeholder:
+  title: "Próximamente"
+  message: "Estamos trabajando en este contenido. Vuelve pronto."
+  back_home: "Volver al inicio"

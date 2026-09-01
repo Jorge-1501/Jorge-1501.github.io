@@ -1,3 +1,13 @@
+{% assign lang = page.lang | default: "es" %}
+{% assign clases_coll_name = "clases" %}
+{% assign investigacion_coll_name = "investigacion" %}
+{% if lang == "en" %}
+    {% assign clases_coll_name = "clases_en" %}
+    {% assign investigacion_coll_name = "investigacion_en" %}
+{% endif %}
+{% assign clases_coll = site[clases_coll_name] %}
+{% assign investigacion_coll = site[investigacion_coll_name] %}
+
 <nav class="sticky top-16 z-50 w-full bg-[var(--bg-color)] border-b border-theme px-8 md:px-20 py-4 shadow-sm">
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
@@ -11,56 +21,56 @@
 
             {%comment%} Buscamos la primera pieza de contenido (orden 1) en la colección correcta {% endcomment %}
             {% if page.proyecto %}
-                {% assign primera_leccion = site.investigacion | where: "proyecto", page.proyecto | sort: "orden" | first %}
+                {% assign primera_leccion = investigacion_coll | where: "proyecto", page.proyecto | sort: "orden" | first %}
             {% else %}
-                {% assign primera_leccion = site.clases | where: "curso", page.curso | where: "capitulo", page.capitulo | sort: "orden" | first %}
+                {% assign primera_leccion = clases_coll | where: "curso", page.curso | where: "capitulo", page.capitulo | sort: "orden" | first %}
             {% endif %}
-            
-            <a href="{{ primera_leccion.url | relative_url }}" 
-            class="px-3 py-1.5 flex items-center gap-2 text-[9px] mono uppercase rounded-full transition-all 
+
+            <a href="{{ primera_leccion.url | relative_url }}"
+            class="px-3 py-1.5 flex items-center gap-2 text-[9px] mono uppercase rounded-full transition-all
             {% unless es_flujo %}bg-[var(--accent)] text-white shadow-lg{% else %}opacity-50 hover:opacity-100{% endunless %}">
-                <span>📄</span> <span class="hidden sm:inline">Enfoque</span>
+                <span>📄</span> <span class="hidden sm:inline">{% include t.html section="nav_tabs" key="enfoque" %}</span>
             </a>
 
             {% comment %} El botón de Flujo busca el archivo .html manualmente {% endcomment %}
             {% if page.proyecto %}
-                {% assign pagina_flujo = site.pages | where: "proyecto", page.proyecto | first %}
+                {% assign pagina_flujo = site.pages | where: "proyecto", page.proyecto | where: "lang", lang | first %}
             {% else %}
-                {% assign pagina_flujo = site.pages | where: "layout", "capitulo-flujo" | where: "curso", page.curso | where: "capitulo", page.capitulo | first %}
+                {% assign pagina_flujo = site.pages | where: "layout", "capitulo-flujo" | where: "curso", page.curso | where: "capitulo", page.capitulo | where: "lang", lang | first %}
             {% endif %}
-            
+
             {% if pagina_flujo %}
-                <a href="{{ pagina_flujo.url | relative_url }}" 
+                <a href="{{ pagina_flujo.url | relative_url }}"
                 class="px-3 py-1.5 flex items-center gap-2 text-[9px] mono uppercase rounded-full transition-all
                 {% if es_flujo %}bg-[var(--accent)] text-white shadow-lg{% else %}opacity-50 hover:opacity-100{% endif %}">
-                    <span>📖</span> <span class="hidden sm:inline">Flujo</span>
+                    <span>📖</span> <span class="hidden sm:inline">{% include t.html section="nav_tabs" key="flujo" %}</span>
                 </a>
             {% else %}
-                <span class="px-3 py-1.5 opacity-20 text-[9px] mono uppercase">📖 Sin Flujo</span>
+                <span class="px-3 py-1.5 opacity-20 text-[9px] mono uppercase">📖 {% include t.html section="nav_tabs" key="sin_flujo" %}</span>
             {% endif %}
         </div>
     </div>
 
     <div class="flex gap-6 overflow-x-auto scroll-hide mt-4 border-t border-theme pt-3">
-        {% comment %} 
-        Detección dinámica: Si existe 'proyecto', busca en investigacion. 
+        {% comment %}
+        Detección dinámica: Si existe 'proyecto', busca en investigacion.
         Si no, busca en clases.
         {% endcomment %}
-        
+
         {% if page.proyecto %}
-            {% assign items_para_navegar = site.investigacion | where: "proyecto", page.proyecto %}
+            {% assign items_para_navegar = investigacion_coll | where: "proyecto", page.proyecto %}
             {% assign llave_agrupadora = "seccion" %}
         {% else %}
-            {% assign items_para_navegar = site.clases | where: "curso", page.curso %}
+            {% assign items_para_navegar = clases_coll | where: "curso", page.curso %}
             {% assign llave_agrupadora = "capitulo" %}
         {% endif %}
 
         {% assign grupos = items_para_navegar | group_by: llave_agrupadora %}
-        
+
         {% for grupo in grupos %}
             {% assign primera = grupo.items | sort: "orden" | first %}
             <a href="{{ primera.url | relative_url }}" class="relative pb-2 group whitespace-nowrap">
-                <span class="text-[10px] mono uppercase 
+                <span class="text-[10px] mono uppercase
                     {% if grupo.name == page.capitulo or grupo.name == page.seccion %}
                         text-[var(--accent)] font-bold
                     {% else %}

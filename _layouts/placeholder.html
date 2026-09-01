@@ -1,0 +1,16 @@
+---
+layout: default
+---
+<section class="py-24 px-12 max-w-3xl mx-auto text-center">
+    <span class="mono text-xs opacity-40 uppercase tracking-[0.3em] block mb-6">/// {{ page.title }}</span>
+    <h2 class="text-5xl font-bold tracking-tighter mb-6">{% include t.html section="placeholder" key="title" %}</h2>
+    <p class="text-lg leading-relaxed opacity-70 max-w-xl mx-auto mb-12">
+        {% include t.html section="placeholder" key="message" %}
+    </p>
+
+    {% assign home_href = "/index.html" %}
+    {% if page.lang == "en" %}{% assign home_href = "/en/index.html" %}{% endif %}
+    <a href="{{ home_href | relative_url }}" class="border border-theme px-6 py-3 text-xs mono uppercase tracking-widest hover:bg-[var(--sidebar-bg)] hover:text-white transition-all">
+        {% include t.html section="placeholder" key="back_home" %}
+    </a>
+</section>

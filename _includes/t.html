@@ -1,0 +1,8 @@
+{% assign t_lang = page.lang | default: "es" %}
+{% assign t_dict = site.data.i18n[t_lang][include.section] %}
+{% assign t_val = t_dict[include.key] %}
+{% if t_val == nil %}
+    {% assign t_dict = site.data.i18n["es"][include.section] %}
+    {% assign t_val = t_dict[include.key] %}
+{% endif %}
+{{- t_val -}}

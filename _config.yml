@@ -5,3 +5,29 @@ collections:
   investigacion:
     output: true
     permalink: /investigacion/:path/
+  clases_en:
+    output: true
+    permalink: /en/clases/:path/
+  investigacion_en:
+    output: true
+    permalink: /en/investigacion/:path/
+
+defaults:
+  - scope:
+      path: ""
+    values:
+      lang: es
+  - scope:
+      path: "en"
+    values:
+      lang: en
+  - scope:
+      path: ""
+      type: clases_en
+    values:
+      lang: en
+  - scope:
+      path: ""
+      type: investigacion_en
+    values:
+      lang: en

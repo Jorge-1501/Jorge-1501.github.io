@@ -1,0 +1,43 @@
+<style>
+    :root {
+        /* Paleta Otoño Profundo - Modo Claro */
+        --bg-color: #FFF9F2; /* Hueso/Crema */
+        --sidebar-bg: #2C362E; /* Verde Bosque Profundo */
+        --sidebar-text: #E0D8C3;
+        --text-main: #3E2723; /* Café Espresso */
+        --text-muted: #795548;
+        --accent: #A04523; /* Terracota */
+        --header-bg: rgba(255, 249, 242, 0.8);
+        --border: rgba(62, 39, 35, 0.1);
+    }
+
+    .dark {
+        /* Paleta Otoño Profundo - Modo Oscuro */
+        --bg-color: #1a1c1a; /* Negro pizarra verdoso */
+        --sidebar-bg: #0d110e;
+        --sidebar-text: #a4b3a7;
+        --text-main: #e0d8c3; /* Crema suave */
+        --text-muted: #a49d8c;
+        --accent: #d87d52; /* Óxido claro */
+        --header-bg: rgba(26, 28, 26, 0.8);
+        --border: rgba(224, 216, 195, 0.1);
+    }
+
+    body {
+        font-family: 'Inter', sans-serif;
+        background-color: var(--bg-color);
+        color: var(--text-main);
+        transition: background-color 0.3s, color 0.3s;
+    }
+
+    .mono { font-family: 'JetBrains Mono', monospace; }
+
+    .prose-container {
+        max-width: 680px;
+        margin: 0 auto;
+    }
+
+    .sidebar-theme { background-color: var(--sidebar-bg); color: var(--sidebar-text); }
+    .border-theme { border-color: var(--border); }
+    .accent-text { color: var(--accent); }
+</style>

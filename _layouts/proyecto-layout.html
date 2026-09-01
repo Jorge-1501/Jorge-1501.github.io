@@ -1,24 +1,29 @@
 ---
 layout: default
 ---
+{% assign lang = page.lang | default: "es" %}
+{% assign investigacion_coll_name = "investigacion" %}
+{% if lang == "en" %}{% assign investigacion_coll_name = "investigacion_en" %}{% endif %}
+{% assign investigacion_coll = site[investigacion_coll_name] %}
+
 <div class="min-h-screen bg-[var(--bg-color)]">
-    
+
     {% include curso-nav-tabs.html %}
 
     <div class="flex flex-col md:flex-row relative">
-        
+
         <aside id="sidebar-lecciones" class="w-full md:w-64 p-8 border-r border-theme bg-black/5 md:sticky md:top-32 md:h-[calc(100vh-8rem)] overflow-y-auto hidden md:block z-30 transition-transform duration-300">
             <p class="mono text-[9px] opacity-30 uppercase mb-6 italic font-bold text-[var(--text-main)]">
-                Módulos del proyecto
+                {% include t.html section="investigacion" key="modulos_proyecto" %}
             </p>
-            
+
             <ul class="space-y-4">
-                {% assign modulos = site.investigacion | where: "proyecto", page.proyecto | sort: "orden" %}
+                {% assign modulos = investigacion_coll | where: "proyecto", page.proyecto | sort: "orden" %}
 
                 {% for modulo in modulos %}
-                    {% comment %} 
-                       FILTRO DE SEGURIDAD: 
-                       Solo mostramos si el nombre del proyecto coincide exactamente 
+                    {% comment %}
+                       FILTRO DE SEGURIDAD:
+                       Solo mostramos si el nombre del proyecto coincide exactamente
                     {% endcomment %}
                     {% if modulo.proyecto == page.proyecto %}
                         <li>
@@ -44,7 +49,7 @@ layout: default
     </div>
 </div>
 
-<button onclick="document.getElementById('sidebar-lecciones').classList.toggle('hidden')" 
+<button onclick="document.getElementById('sidebar-lecciones').classList.toggle('hidden')"
         class="md:hidden fixed bottom-6 right-6 z-50 bg-[var(--accent)] text-white p-4 rounded-full shadow-2xl active:scale-95 transition-transform">
     📚
 </button>
