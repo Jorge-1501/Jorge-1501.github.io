@@ -13,17 +13,17 @@ orden: 1
 
 *A technical summary of the QKAN project, Google Summer of Code 2026 at ML4SCI*
 
-You can find the work in this [GitHub repository](https://github.com/Jorge-1501/QKANs-ML4SCI_2026)
+This project was developed by Jorge Toral and can be found in this [GitHub repository](https://github.com/Jorge-1501/QKANs-ML4SCI_2026)
 
 ---
 
 ## 1. The problem and the core idea
 
-At the Large Hadron Collider, a top quark decays almost instantaneously and produces a **jet** (a collimated spray of particles) with a characteristic internal substructure, distinct from that of an ordinary jet originating from a light quark or a gluon (QCD). Distinguishing these two types of jet —**top tagging**— is a well-studied binary classification problem, with classical reference architectures reaching AUCs above 0.96-0.98 on the public dataset used in this project ([Kasieczka et al., 2019](#ref-kasieczka-2019)): jets simulated at 14 TeV with Pythia8 and an ATLAS-like Delphes detector card, reconstructed with anti-$k_T$ and $R=0.8$ in the range $p_T \in [550, 650]$ GeV.
+At the Large Hadron Collider, a top quark decays almost instantaneously and produces a **jet** (a collimated spray of particles) with a characteristic internal substructure, distinct from that of an ordinary jet originating from a light quark or a gluon (QCD). Distinguishing these two types of jet, **top tagging**, is a well-studied binary classification problem, with classical reference architectures reaching AUCs above 0.96-0.98 on the public dataset used in this project ([Kasieczka et al., 2019](#ref-kasieczka-2019)): jets simulated at 14 TeV with Pythia8 and an ATLAS-like Delphes detector card, reconstructed with anti-$k_T$ and $R=0.8$ in the range $p_T \in [550, 650]$ GeV.
 
 This project does not compete to beat those architectures. Its question is different: **can a variational quantum neural network (VQC) perform this task, and what role can a classical network play in making it feasible?**
 
-The underlying limitation is simple: the cost of simulating a quantum circuit grows as $O(2^Q)$ with the number of qubits $Q$. Feeding a jet with dozens of variables directly into a VQC is impractical. The solution explored here uses a classical **Kolmogorov-Arnold Network (KAN)** as a preprocessor and qubit filter: it is trained, pruned down to a small, interpretable topology, and that pruned topology —not an arbitrary design— decides how many qubits the quantum circuit needs and how they are connected. The classical model determines the quantum resource, rather than leaving it to trial and error.
+The underlying limitation is simple: the cost of simulating a quantum circuit grows as $O(2^Q)$ with the number of qubits $Q$. Feeding a jet with dozens of variables directly into a VQC is impractical. The solution explored here uses a classical **Kolmogorov-Arnold Network (KAN)** as a preprocessor and qubit filter: it is trained, pruned down to a small, interpretable topology, and that pruned topology, not an arbitrary design, decides how many qubits the quantum circuit needs and how they are connected. The classical model determines the quantum resource, rather than leaving it to trial and error.
 
 The full pipeline, documented across three notebooks (`EDA_top.ipynb`, `Training_process.ipynb`, `Results.ipynb`), preprocesses the jets into balanced replicas, trains and prunes the KAN, extracts each surviving edge into a compact basis (Chebyshev or sine) as a *warm start*, fine-tunes the QKAN on an ideal simulator, on one with finite-shot noise, and on one with hardware noise, and compares everything against a classical Random Forest.
 
@@ -39,12 +39,12 @@ A follow-up work by the same authors, [KAN 2.0 (Liu et al., 2024)](#ref-liu-2024
 
 ## 3. Exploring the data: what makes a top jet different
 
-Before training anything, the EDA notebook characterizes the dataset. The HDF5 file does not document the order of its columns, so we infer it from the data: each block of four columns corresponds to one constituent particle of the jet, with energy in the first position and the three momentum components afterward —a pattern recognizable in the column means, much larger in the first column of each block of four.
+Before training anything, the EDA notebook characterizes the dataset. The HDF5 file does not document the order of its columns, so we infer it from the data: each block of four columns corresponds to one constituent particle of the jet, with energy in the first position and the three momentum components afterward, a pattern recognizable in the column means, much larger in the first column of each block of four.
 
 Four observations emerged from the histograms and radial profiles that guided all subsequent design choices:
 
-- **Invariant mass discriminates, but isn't enough.** $m_{jet} = \sqrt{E^2 - p_x^2 - p_y^2 - p_z^2}$ has a clear peak in the signal around the top quark mass (~173 GeV), while the background is wider. The two distributions overlap, so we selected the **145-205 GeV** window for the main experiments: within it, the trivial mass cue is largely removed and classifiers must rely on subtler information.
-- **Top jets are more populated**: multiplicity (number of constituents) is systematically higher and more spread out than in QCD, consistent with a three-body decay.
+- **Invariant mass discriminates, but isn't enough.** $m_{jet} = \sqrt{E^2 - p_x^2 - p_y^2 - p_z^2}$ has a clear peak in the signal around the top quark mass (~173 GeV), while the background is wider. The two distributions overlap by sections, so we selected the **145-205 GeV** window for the main experiments: within it, the trivial mass cue is largely removed and classifiers must rely on subtler information.
+- **Top jets are more populated**: multiplicity (number of constituents) is systematically higher and more spread out than in QCD, consistent with a three-body decay for this selected mass window.
 - **Top jets are more diffuse**: the radial energy profile and the cumulative $p_T$ fraction grow more gradually in tops than in QCD, where energy is more concentrated near the jet axis.
 - $\eta$-$\phi$ scatter plots were inconclusive due to noise and scale.
 
@@ -75,12 +75,12 @@ An extractor isolates the response of each active edge by disconnecting the othe
 The circuit follows five design principles:
 
 1. **Data re-uploading**: each edge's univariate function is modeled through repeated rotations of the input data, rather than encoding it once.
-2. The classical hidden layer decides which variables matter and how many qubits are used —the circuit inherits the topology, it doesn't invent it.
+2. The classical hidden layer decides which variables matter and how many qubits are used, the circuit inherits the topology.
 3. **Summation is free**: consecutive $R_Z$ rotations on the same wire accumulate their angles, so sum nodes require no two-qubit gate at all.
 4. **Multiplication** is implemented with an `IsingZZ` gate combined with a `CNOT`.
 5. All information collapses onto a single output wire, and the prediction is the Pauli-Z expectation value of a single qubit.
 
-The hidden-to-output stage is a variational readout, not a literal second KAN layer, because a hidden node's value lives in a qubit's phase and cannot be re-uploaded without an intermediate measurement. For this reason, **only depth-2 networks are supported** —an explicit design limitation, not an oversight, which we leave as future work.
+The hidden-to-output stage is a variational readout, not a literal second KAN layer, because a hidden node's value lives in a qubit's phase and cannot be re-uploaded without an intermediate measurement. For this reason, **only depth-2 networks are supported**, an explicit design limitation, which we leave as future work.
 
 The model can run on three simulators: `ideal` (`lightning.qubit`), `shots` (`default.qubit` with a finite number of shots), and `noisy` (Qiskit Aer with a noise model derived from `FakeManilaV2`). Training uses binary cross-entropy with logits, the Adam optimizer, and a `ReduceLROnPlateau` scheduler that halves the learning rate when validation stalls. Since simulation is expensive, each epoch trains on a fresh random subset (~1,000 samples) and validates on a fixed subset.
 
@@ -88,7 +88,7 @@ The model can run on three simulators: `ideal` (`lightning.qubit`), `shots` (`de
 
 Before fine-tuning the circuit with gradient descent, we need to decide what angles to start from. We compare three strategies.
 
-**Chebyshev**, following the design of [Chebyshev-KAN (Sidharth et al., 2024)](#ref-sidharth-2024). Each isolated edge response is fit as $y \approx \sum_{i=0}^{N} c_i T_i(x)$ over $[-1,1]$, and the resulting coefficients are converted into the initial rotation angles. The degree is fixed at $N=4$ for all edges. This decision —a fixed degree instead of an adaptive one— comes from a real bug diagnosed during the project: we originally searched for the smallest degree that exceeded an $R^2$ threshold, but that criterion almost always chose low degrees and produced inconsistent metrics, because the circuit lost the classical structure's information. The symptom was an abrupt drop in reference AUC (from ~0.80 to 0.26-0.36) as the training set got smaller; reverting to a fixed degree restored the expected behavior, and we document it as a project finding, not just a side note.
+**Chebyshev**, following the design of [Chebyshev-KAN (Sidharth et al., 2024)](#ref-sidharth-2024). Each isolated edge response is fit as $y \approx \sum_{i=0}^{N} c_i T_i(x)$ over $[-1,1]$, and the resulting coefficients are converted into the initial rotation angles. The degree is fixed at $N=4$ for all edges. This decision, a fixed degree instead of an adaptive one, comes from a real bug diagnosed during the project: we originally searched for the smallest degree that exceeded an $R^2$ threshold, but that criterion almost always chose low degrees and produced inconsistent metrics, because the circuit lost the classical structure's information. The symptom was an abrupt drop in reference AUC (from ~0.80 to 0.26-0.36) as the training set got smaller; reverting to a fixed degree restored the expected behavior.
 
 **Sine basis.** As an alternative we implemented a fixed-frequency sinusoidal basis, following the design of [**SineKAN** (Reinhardt et al., 2024)](#ref-reinhardt-2024): $y \approx \sum_k A_k \sin(\text{freq}_k \, x + \text{phase}_k)$, with the amplitudes $A_k$ obtained via least squares over a *fixed*, not learned, grid of frequencies and phases. In SineKAN, the notion of an edge's "degree" corresponds exactly to the number of sine terms summed in that grid: there's no growing-degree polynomial as in Chebyshev, just more accumulated sinusoidal harmonics. This basis is, moreover, the one used by Ria Khatoniar herself in the classical-readout branch of her own GSoC 2025 project ([Khatoniar, 2025a](#ref-khatoniar-2025a), section 8), and the reference script we used to faithfully port the frequency-and-phase grid construction (constants $A=0.9724$, $K=0.9884$, $C=0.9994$ from the original `SineKANLayer`) comes directly from her code.
 
@@ -108,11 +108,11 @@ All per-run metrics are collected into a single Parquet table (74 rows across 6 
 
 ### 8.1 With mass cut, five replicas (seeds 10-14)
 
-The following figure summarizes the mean test AUC (±standard deviation over 5 seeds) for the whole model chain, from the Random Forest to the untrained, randomly initialized QKAN:
+The following figure summarizes the mean test AUC and its standard deviation over 5 seeds for the whole model chain, from the Random Forest to the untrained, randomly initialized QKAN:
 
 ![AUC by model, mass-cut regime](/assets/img/investigacion/qkan/auc_mass_cut.png)
 
-Three observations emerge from this table. First, pruning and symbolic simplification cost ~0.03 AUC relative to the base KAN, and the trained QKAN sits an additional 0.02 below the retrained KAN: the circuit reaches AUC ~0.73-0.74 using only two variables and 11 qubits. Second, **fine-tuning does matter**: training the circuit raises the Chebyshev warm start from 0.698 to 0.736 on the ideal simulator. Third, the three backends —ideal, finite-shot, and noisy— differ from each other by no more than ~0.006 AUC; within our noise model, the circuit does not visibly degrade.
+Three observations emerge from this table. First, pruning and symbolic simplification cost ~0.03 AUC relative to the base KAN, and the trained QKAN sits an additional 0.02 below the retrained KAN: the circuit reaches AUC ~0.73-0.74 using only two variables and 11 qubits. Second, **fine-tuning does matter**: training the circuit raises the Chebyshev warm start from 0.698 to 0.736 on the ideal simulator. Third, the three backends (ideal, finite-shot, and noisy) differ from each other by no more than ~0.006 AUC; within our noise model, the circuit does not visibly degrade.
 
 The comparison across warm-start bases confirms the order Chebyshev > Sine > Random, both in AUC and in background rejection. At a signal-efficiency working point of 50% ($\varepsilon_S = 0.5$), we measured:
 
@@ -129,7 +129,7 @@ To check that these differences are not statistical noise over just five seeds, 
 
 Both null hypotheses are clearly rejected, though we read this result with caution since it rests on only five seeds.
 
-One more point: the quantum circuit's accuracy hovers around only 0.56-0.57, versus ~0.71 for the classical KAN. The reference confusion matrix collapses toward the positive class (recall 0.98, precision 0.53). The ranking signal, as measured by AUC, survives, but the fixed threshold of 0.5 is poorly calibrated for the circuit's output — which is why we report AUC, not accuracy, as the main metric.
+One more point: the quantum circuit's accuracy hovers around only 0.56-0.57, versus ~0.71 for the classical KAN. The reference confusion matrix collapses toward the positive class (recall 0.98, precision 0.53). The ranking signal, as measured by AUC, survives, but the fixed threshold of 0.5 is poorly calibrated for the circuit's output, which is why we report AUC, not accuracy, as the main metric.
 
 ### 8.2 Almost the full dataset, no mass cut
 
@@ -137,15 +137,15 @@ In a second regime we use practically all available events (with the same 10 con
 
 ![AUC by model, full-dataset regime](/assets/img/investigacion/qkan/auc_full_dataset.png)
 
-Without the mass cut, classifiers can directly exploit jet mass, so all models reach their highest discrimination, and the trained QKAN maintains an AUC above 0.90 —noticeably higher than in the cut regime, although, again, its accuracy is lower (0.72-0.74, recall 0.97, precision ~0.65), repeating the same calibration issue observed before.
+Without the mass cut, classifiers can directly exploit jet mass, so all models reach their highest discrimination, and the trained QKAN maintains an AUC above 0.90, noticeably higher than in the cut regime, although, again, its accuracy is lower (0.72-0.74, recall 0.97, precision ~0.65), repeating the same calibration issue observed before.
 
 ## 9. How far are we from the literature?
 
 It's natural to ask how these numbers compare to the published state of the art for the same dataset. The most-cited comparison notebook for this benchmark is [SebastianMacaluso/TopTagComparison](#ref-macaluso), which gathers 14 classical and deep-learning taggers (ParticleNet, TreeNiN, ResNeXt, PFN, CNN, NSub, LBN, P-CNN, LoLa, EFN, EFP, TopoDNN, among others) on the full 404k-event dataset, with no mass restriction, with AUCs between 0.967 and 0.985 and background rejection at $\varepsilon_S=0.3$ ranging from 295.2 (TopoDNN) to 1298.5 (ParticleNet).
 
-This comparison requires an explicit caveat: **those numbers use the full dataset, with no cuts**, while most of our results with replicas and error bars correspond to the aggressive mass-cut regime (145-205 GeV), designed to remove the easiest cue and force models to rely on substructure. They are, therefore, not directly comparable point by point. The most reasonable common ground is our no-mass-cut regime (section 8.2): there, the base classical KAN reaches AUC 0.959 and the Random Forest 0.965, in the neighborhood of the lower end of the literature, though still below specialized architectures like ParticleNet. The trained QKAN in this regime reaches AUC 0.904 —notable for an 11-qubit circuit derived from just two variables, but clearly below both our classical KAN and the taggers in the literature.
+This comparison requires an explicit caveat: **those numbers use the full dataset, with no cuts**, while most of our results with replicas and error bars correspond to the aggressive mass-cut regime (145-205 GeV), designed to remove the easiest cue and force models to rely on substructure. They are, therefore, not directly comparable point by point. The most reasonable common ground is our no-mass-cut regime (section 8.2): there, the base classical KAN reaches AUC 0.959 and the Random Forest 0.965, in the neighborhood of the lower end of the literature, though still below specialized architectures like ParticleNet. The trained QKAN in this regime reaches AUC 0.904, notable for an 11-qubit circuit derived from just two variables, but clearly below both our classical KAN and the taggers in the literature.
 
-Two additional factors, beyond the mass cut, widen this gap. The first is variable compression: we go from 22 to just 2 after pruning, while architectures like ParticleNet or IAFormer consume the full constituent cloud with graphs or sparse attention designed for that high dimensionality. The second, evident only when revisiting the preprocessing after having the main results, is that **each jet carries up to 200 constituents and our pipeline only uses the 10 most energetic**. This is a deliberate simplification to keep the circuit simulable, but it leaves out almost all low-energy substructure —precisely where architectures like [IAFormer (Esmail et al., 2026)](#ref-esmail-2026) or [L-GATr (Brehmer et al., 2025)](#ref-brehmer-2025), Lorentz-equivariant, report gains. This is, together with the mass cut and the compression to two variables, a third legitimate reason for the gap with the state of the art.
+Two additional factors, beyond the mass cut, widen this gap. The first is variable compression: we go from 22 to just 2 after pruning, while architectures like ParticleNet or IAFormer consume the full constituent cloud with graphs or sparse attention designed for that high dimensionality. The second, evident only when revisiting the preprocessing after having the main results, is that **each jet carries up to 200 constituents and our pipeline only uses the 10 most energetic**. This is a deliberate simplification to keep the circuit simulable, but it leaves out almost all low-energy substructure, precisely where architectures like [IAFormer (Esmail et al., 2026)](#ref-esmail-2026) or [L-GATr (Brehmer et al., 2025)](#ref-brehmer-2025), Lorentz-equivariant, report gains. This is, together with the mass cut and the compression to two variables, a third legitimate reason for the gap with the state of the art.
 
 ## 10. Related work: other quantum-KAN approaches
 
@@ -155,7 +155,7 @@ This project is not the only effort combining KANs with quantum computing, and i
 
 **[QuKAN (Werner et al., 2025)](#ref-werner-2025)** explores a different approach: instead of distilling an already-trained classical KAN into a circuit, it directly uses a Quantum Circuit Born Machine as a generative mechanism for the KAN's univariate functions, quantum from the start.
 
-Taken together, the three projects leave a clear pattern: scaling a quantum KAN beyond a handful of variables is, in 2025-2026, a shared open problem, whether due to simulation memory (Khatoniar, [2025a](#ref-khatoniar-2025a), [2025b](#ref-khatoniar-2025b)), the cost of a generative quantum mechanism ([Werner et al., 2025](#ref-werner-2025)), or —here— the need to prune aggressively before the circuit can even be simulated.
+Taken together, the three projects leave a clear pattern: scaling a quantum KAN beyond a handful of variables is, in 2025-2026, a shared open problem, whether due to simulation memory (Khatoniar, [2025a](#ref-khatoniar-2025a), [2025b](#ref-khatoniar-2025b)), the cost of a generative quantum mechanism ([Werner et al., 2025](#ref-werner-2025)), or, here, the need to prune aggressively before the circuit can even be simulated.
 
 ## 11. Conclusions
 
@@ -189,7 +189,7 @@ Five conclusions summarize the project.
 - **Depth-2 networks only**: deeper KANs would require intermediate measurement and re-encoding.
 - **Other datasets**: a preprocessing pipeline exists for quark-gluon tagging, and Higgs detection is only mentioned as a future reference, with no development.
 
-In sum, the project shows that a classical KAN can decide the shape of a quantum circuit, that knowledge transferred through a good basis matters —and can be measured, not just assumed— and that the resulting compact model preserves a useful part of the classification signal. It does not yet match the best classical baseline, and that limit is reported alongside the results, not hidden.
+In sum, the project shows that a classical KAN can decide the shape of a quantum circuit, that knowledge transferred through a good basis matters, and can be measured, not just assumed; and that the resulting compact model preserves a useful part of the classification signal. It does not yet match the best classical baseline, and that limit is reported alongside the results.
 
 ## Acknowledgements
 
@@ -203,8 +203,8 @@ I want to thank my friend Eduardo Villamil for providing computational resources
 - <a id="ref-esmail-2026"></a>Esmail, W., Hammad, A., & Nojiri, M. (2026). IAFormer: Interaction-aware transformer network for collider data analysis. *SciPost Physics, 20*, Article 108. https://arxiv.org/abs/2505.03258
 - <a id="ref-gleyzer-2025"></a>Gleyzer, S., Nguyen, H., Ramakrishnan, D. P., & Reinhardt, E. A. F. (2025). Sinusoidal approximation theorem for Kolmogorov–Arnold networks. *Mathematics, 13*(19), Article 3157. https://doi.org/10.3390/math13193157
 - <a id="ref-kasieczka-2019"></a>Kasieczka, G., Plehn, T., Thompson, J., & Russell, M. (2019). *Top quark tagging reference dataset* (Version v0) [Data set]. Zenodo. https://doi.org/10.5281/zenodo.2603256
-- <a id="ref-khatoniar-2025a"></a>Khatoniar, R. (2025a). *GSoC 2025 | Quantum Kolmogorov-Arnold networks for high energy physics analysis at the LHC (Part I)* [Blog post]. Medium. https://medium.com/@riakhatoniar1234/gsoc-2025-quantum-kolmogorov-arnold-networks-for-high-energy-physics-analysis-at-the-lhc-a98207bf6d4c
-- <a id="ref-khatoniar-2025b"></a>Khatoniar, R. (2025b). *GSoC 2025 | Quantum Kolmogorov-Arnold networks for high energy physics analysis at the LHC (Part II)* [Blog post]. Medium. https://medium.com/@riakhatoniar1234/gsoc-2025-quantum-kolmogorov-arnold-networks-for-high-energy-physics-analysis-at-the-lhc-part-8b44f5616e6f
+- <a id="ref-khatoniar-2025a"></a>Khatoniar, R. (2025a). *GSoC 2025 \| Quantum Kolmogorov-Arnold networks for high energy physics analysis at the LHC (Part I)* [Blog post]. Medium. https://medium.com/@riakhatoniar1234/gsoc-2025-quantum-kolmogorov-arnold-networks-for-high-energy-physics-analysis-at-the-lhc-a98207bf6d4c
+- <a id="ref-khatoniar-2025b"></a>Khatoniar, R. (2025b). *GSoC 2025 \| Quantum Kolmogorov-Arnold networks for high energy physics analysis at the LHC (Part II)* [Blog post]. Medium. https://medium.com/@riakhatoniar1234/gsoc-2025-quantum-kolmogorov-arnold-networks-for-high-energy-physics-analysis-at-the-lhc-part-8b44f5616e6f
 - <a id="ref-liu-2024-kan"></a>Liu, Z., Wang, Y., Vaidya, S., Ruehle, F., Halverson, J., Soljačić, M., Hou, T. Y., & Tegmark, M. (2024). *KAN: Kolmogorov-Arnold networks*. arXiv. https://arxiv.org/abs/2404.19756
 - <a id="ref-liu-2024-kan2"></a>Liu, Z., Ma, P., Wang, Y., Matusik, W., & Tegmark, M. (2024). *KAN 2.0: Kolmogorov-Arnold networks meet science*. arXiv. https://arxiv.org/abs/2408.10205
 - <a id="ref-macaluso"></a>Macaluso, S. (n.d.). *TopTagComparison* [Code repository]. GitHub. Retrieved September 21, 2026, from https://github.com/SebastianMacaluso/TopTagComparison
