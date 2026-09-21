@@ -13,7 +13,7 @@ orden: 1
 
 *Un resumen técnico del proyecto QKAN, Google Summer of Code 2026 en ML4SCI*
 
-Este proyecto fue desarrollado por Jorge Toral y puede encontrarse en el [repositorio de GitHub](https://github.com/Jorge-1501/QKANs-ML4SCI_2026)
+Este proyecto fue desarrollado por Jorge Toral y puede encontrarse en este [repositorio de GitHub](https://github.com/Jorge-1501/QKANs-ML4SCI_2026)
 
 ---
 
@@ -54,6 +54,16 @@ A partir de esto construimos la representación de entrada, combinando variables
 
 Las variables locales ya viven en $(0,1)$; a las globales les aplicamos una transformación logarítmica seguida de normalización tanh, conservando deliberadamente los valores atípicos porque los centros de las dos distribuciones de clase son similares y es la cola la que lleva información discriminante.
 
+<figure>
+  <img src="/assets/img/investigacion/qkan/dispersion.png" alt="Dispersion">
+  <figcaption>Dispersión de los constituyentes de los jets en señales de top y QCD. Rango antes de cualquier corte de masa.</figcaption>
+</figure>
+
+<figure>
+  <img src="/assets/img/investigacion/qkan/Invariant_mass.png" alt="Invariant Mass">
+  <figcaption>Masa invariante de los jets en señales de top y QCD. Rango antes de cualquier corte de masa. </figcaption>
+</figure>
+
 Finalmente, como el número de eventos en la ventana de masa difiere entre clases (hay más tops), submuestreamos la clase mayoritaria para balancear, y dividimos el resultado en **5 subconjuntos disjuntos y balanceados por clase**. Cada semilla selecciona uno (`seed % 5`), de modo que varias semillas dan réplicas independientes de principio a fin en lugar de un único punto de estimación.
 
 ## 4. La arquitectura clásica y su poda
@@ -79,6 +89,16 @@ El circuito sigue cinco principios de diseño:
 3. **La suma es gratuita**: rotaciones $R_Z$ consecutivas en el mismo cable acumulan sus ángulos, así que los nodos de suma no requieren ninguna puerta de dos qubits.
 4. La **multiplicación** se implementa con una puerta `IsingZZ` combinada con un `CNOT`.
 5. Toda la información colapsa en un solo cable de salida, y la predicción es el valor esperado de Pauli-Z de un único qubit.
+
+<figure>
+  <img src="/assets/img/investigacion/qkan/retrained_model.png" alt="KAN pruned">
+  <figcaption>Modelo KAN podado y reentrenado.</figcaption>
+</figure>
+
+<figure>
+  <img src="/assets/img/investigacion/qkan/quantum-circuit.png" alt="Quantum Circuit">
+  <figcaption>Circuito cuántico correspondiente al grafo clásico podado.</figcaption>
+</figure>
 
 La etapa de oculta-a-salida es un lector variacional, no una segunda capa literal de KAN, porque el valor de un nodo oculto vive en la fase de un qubit y no puede volver a cargarse sin una medición intermedia. Por esta razón, **solo se soportan redes de profundidad 2**, una limitación de diseño explícita, que dejamos como trabajo futuro.
 
@@ -110,13 +130,20 @@ Todas las métricas por corrida se recolectan en una única tabla Parquet (74 fi
 
 La siguiente figura resume el AUC de prueba medio y su desviación estándar sobre 5 semillas, para toda la cadena de modelos, del Random Forest hasta la QKAN inicializada al azar sin entrenar:
 
-![AUC por modelo, régimen con corte de masa](/assets/img/investigacion/qkan/auc_mass_cut.png)
+<figure>
+  <img src="/assets/img/investigacion/qkan/auc_mass_cut.png" alt="AUC por modelo, régimen con corte de masa">
+  <figcaption>AUC por modelo, régimen con corte de masa.</figcaption>
+</figure>
+
 
 Tres observaciones se desprenden de esta tabla. Primero, podar y simplificar simbólicamente cuesta ~0.03 de AUC respecto a la KAN base, y la QKAN entrenada queda un 0.02 adicional por debajo de la KAN reentrenada: el circuito alcanza AUC ~0.73-0.74 usando solo dos variables y 11 qubits. Segundo, **el afinado sí importa**: entrenar el circuito eleva el warm start de Chebyshev de 0.698 a 0.736 en el simulador ideal. Tercero, los tres backends (ideal, disparos finitos y ruidoso) difieren entre sí en no más de ~0.006 de AUC; dentro de nuestro modelo de ruido, el circuito no se degrada visiblemente.
 
 La comparación entre bases de warm start confirma el orden Chebyshev > Seno > Aleatorio, tanto en AUC como en rechazo de fondo. A un punto de trabajo de eficiencia de señal del 50% ($\varepsilon_S = 0.5$), medimos:
 
-![Rechazo de fondo por base de warm start](/assets/img/investigacion/qkan/bkg_rejection_warmstart.png)
+<figure>
+  <img src="/assets/img/investigacion/qkan/bkg_rejection_warmstart.png" alt="Rechazo de fondo por base de warm start">
+  <figcaption>Rechazo de fondo por base de warm start.</figcaption>
+</figure>
 
 Es decir, inicializar el circuito con la base de Chebyshev, sin entrenamiento adicional, rechaza aproximadamente 3 veces más fondo que la inicialización aleatoria a la misma eficiencia de señal, y la base de seno queda en un punto intermedio, consistente con su ajuste de arista más débil.
 
@@ -135,7 +162,10 @@ Un punto adicional: la exactitud del circuito cuántico ronda solo 0.56-0.57, fr
 
 En un segundo régimen usamos prácticamente todos los eventos disponibles (con los mismos 10 constituyentes por jet, pero sin restringir la ventana de masa), en un solo bloque, semilla 42. Al no haber réplicas aquí, no podemos calcular barras de error ni pruebas de hipótesis: el resultado debe leerse como **una sola corrida**.
 
-![AUC por modelo, régimen sin corte de masa](/assets/img/investigacion/qkan/auc_full_dataset.png)
+<figure>
+  <img src="/assets/img/investigacion/qkan/auc_full_dataset.png" alt="AUC por modelo, régimen sin corte de masa">
+  <figcaption>AUC por modelo, régimen sin corte de masa.</figcaption>
+</figure>
 
 Sin el corte de masa, los clasificadores pueden explotar directamente la masa del jet, así que todos los modelos alcanzan su discriminación más alta, y la QKAN entrenada mantiene un AUC superior a 0.90, notablemente más alto que en el régimen con corte, aunque, otra vez, su exactitud es más baja (0.72-0.74, recall 0.97, precisión ~0.65), repitiendo el mismo problema de calibración observado antes.
 

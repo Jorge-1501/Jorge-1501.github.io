@@ -9,7 +9,7 @@ estatus: "Completed"
 description: "Quantum Kolmogorov-Arnold Networks for jet tagging, my Google Summer of Code 2026 project with ML4SCI."
 orden: 1
 ---
-# Quantum Kolmogorov-Arnold Networks for Top Quark Jet Tagging
+# Quantum Kolmogorov-Arnold Networks for top quark jet tagging
 
 *A technical summary of the QKAN project, Google Summer of Code 2026 at ML4SCI*
 
@@ -54,6 +54,17 @@ From this we built the input representation, combining **global** variables (jet
 
 The local variables already live in $(0,1)$; for the global ones we apply a logarithmic transform followed by tanh normalization, deliberately keeping the outliers because the centers of the two class distributions are similar and it is the tail that carries discriminative information.
 
+<figure>
+  <img src="/assets/img/investigacion/qkan/dispersion.png" alt="Dispersion">
+  <figcaption>Dispersion of the jet constituents in top and QCD signals. Range before any mass cut.</figcaption>
+</figure>
+
+<figure>
+  <img src="/assets/img/investigacion/qkan/Invariant_mass.png" alt="Invariant Mass">
+  <figcaption>Invariant mass of the jets in top and QCD signals. Range before any mass cut.</figcaption>
+</figure>
+
+
 Finally, since the number of events in the mass window differs between classes (there are more tops), we subsample the majority class to balance it, and split the result into **5 disjoint, class-balanced subsets**. Each seed selects one (`seed % 5`), so several seeds give independent end-to-end replicas rather than a single point estimate.
 
 ## 4. The classical architecture and its pruning
@@ -79,6 +90,16 @@ The circuit follows five design principles:
 3. **Summation is free**: consecutive $R_Z$ rotations on the same wire accumulate their angles, so sum nodes require no two-qubit gate at all.
 4. **Multiplication** is implemented with an `IsingZZ` gate combined with a `CNOT`.
 5. All information collapses onto a single output wire, and the prediction is the Pauli-Z expectation value of a single qubit.
+
+<figure>
+  <img src="/assets/img/investigacion/qkan/retrained_model.png" alt="KAN pruned">
+  <figcaption>KAN model pruned and retrained.</figcaption>
+</figure>
+
+<figure>
+  <img src="/assets/img/investigacion/qkan/quantum-circuit.png" alt="Quantum Circuit">
+  <figcaption>Quantum circuit corresponding to the pruned classical graph.</figcaption>
+</figure>
 
 The hidden-to-output stage is a variational readout, not a literal second KAN layer, because a hidden node's value lives in a qubit's phase and cannot be re-uploaded without an intermediate measurement. For this reason, **only depth-2 networks are supported**, an explicit design limitation, which we leave as future work.
 
@@ -110,13 +131,19 @@ All per-run metrics are collected into a single Parquet table (74 rows across 6 
 
 The following figure summarizes the mean test AUC and its standard deviation over 5 seeds for the whole model chain, from the Random Forest to the untrained, randomly initialized QKAN:
 
-![AUC by model, mass-cut regime](/assets/img/investigacion/qkan/auc_mass_cut.png)
+<figure>
+  <img src="/assets/img/investigacion/qkan/auc_mass_cut.png" alt="AUC by model, mass-cut regime">
+  <figcaption>AUC by model, mass-cut regime.</figcaption>
+</figure>
 
 Three observations emerge from this table. First, pruning and symbolic simplification cost ~0.03 AUC relative to the base KAN, and the trained QKAN sits an additional 0.02 below the retrained KAN: the circuit reaches AUC ~0.73-0.74 using only two variables and 11 qubits. Second, **fine-tuning does matter**: training the circuit raises the Chebyshev warm start from 0.698 to 0.736 on the ideal simulator. Third, the three backends (ideal, finite-shot, and noisy) differ from each other by no more than ~0.006 AUC; within our noise model, the circuit does not visibly degrade.
 
 The comparison across warm-start bases confirms the order Chebyshev > Sine > Random, both in AUC and in background rejection. At a signal-efficiency working point of 50% ($\varepsilon_S = 0.5$), we measured:
 
-![Background rejection by warm-start basis](/assets/img/investigacion/qkan/bkg_rejection_warmstart.png)
+<figure>
+  <img src="/assets/img/investigacion/qkan/bkg_rejection_warmstart.png" alt="Background rejection by warm-start basis">
+  <figcaption>Background rejection by warm-start basis.</figcaption>
+</figure>
 
 That is, initializing the circuit with the Chebyshev basis, with no further training, rejects roughly 3 times more background than random initialization at the same signal efficiency, with the sine basis landing at an intermediate point, consistent with its weaker edge fit.
 
@@ -135,7 +162,10 @@ One more point: the quantum circuit's accuracy hovers around only 0.56-0.57, ver
 
 In a second regime we use practically all available events (with the same 10 constituents per jet, but without restricting the mass window), in a single block, seed 42. With no replicas here, we cannot compute error bars or hypothesis tests: the result should be read as **a single run**.
 
-![AUC by model, full-dataset regime](/assets/img/investigacion/qkan/auc_full_dataset.png)
+<figure>
+  <img src="/assets/img/investigacion/qkan/auc_full_dataset.png" alt="AUC by model, full-dataset regime">
+  <figcaption>AUC by model, full-dataset regime.</figcaption>
+</figure>
 
 Without the mass cut, classifiers can directly exploit jet mass, so all models reach their highest discrimination, and the trained QKAN maintains an AUC above 0.90, noticeably higher than in the cut regime, although, again, its accuracy is lower (0.72-0.74, recall 0.97, precision ~0.65), repeating the same calibration issue observed before.
 

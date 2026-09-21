@@ -125,6 +125,40 @@
     .article-content pre code { background: none; padding: 0; }
 
     .article-content img { max-width: 100%; height: auto; border-radius: 4px; margin: 1.5rem 0; }
+    
+    .article-content {
+        counter-reset: figure-counter;
+    }
+    
+    .article-content figure {
+        counter-increment: figure-counter;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin: 2rem 0;
+        width: 100%;
+    }
+    .article-content figure img {
+        margin: 0;
+    }
+    .article-content figcaption {
+        font-size: 0.875rem;
+        font-style: italic;
+        color: var(--text-muted);
+        margin-top: 0.75rem;
+        text-align: center;
+        line-height: 1.4;
+    }
+    html[lang="es"] .article-content figcaption::before {
+        content: "Figura " counter(figure-counter) ": ";
+        font-weight: bold;
+        color: var(--text-main);
+    }
+    html[lang="en"] .article-content figcaption::before {
+        content: "Figure " counter(figure-counter) ": ";
+        font-weight: bold;
+        color: var(--text-main);
+    }
     .article-content hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
 
     .article-content table { width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; font-size: 0.9rem; }
