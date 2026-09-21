@@ -39,6 +39,7 @@ investigacion:
   default_status: "En desarrollo"
   default_description: "Investigación en curso sobre modelos avanzados y computación científica."
   modulos_proyecto: "Módulos del proyecto"
+  en_esta_pagina: "En esta página"
 
 nav_tabs:
   enfoque: "Enfoque"

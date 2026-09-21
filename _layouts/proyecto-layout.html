@@ -39,10 +39,17 @@ layout: default
                     {% endif %}
                 {% endfor %}
             </ul>
+
+            <div id="toc-wrapper" class="hidden mt-8 pt-8 border-t border-theme">
+                <p class="mono text-[9px] opacity-30 uppercase mb-6 italic font-bold text-[var(--text-main)]">
+                    {% include t.html section="investigacion" key="en_esta_pagina" %}
+                </p>
+                <ul id="toc-secciones" class="space-y-3"></ul>
+            </div>
         </aside>
 
-        <article class="flex-1 py-12 px-6 md:px-20 max-w-4xl min-h-screen">
-            <div class="prose dark:prose-invert max-w-none prose-headings:text-[var(--text-main)] prose-p:text-[var(--text-muted)]">
+        <article id="articulo-proyecto" class="flex-1 py-12 px-6 md:px-20 max-w-4xl min-h-screen">
+            <div class="article-content">
                 {{ content }}
             </div>
         </article>
@@ -53,3 +60,41 @@ layout: default
         class="md:hidden fixed bottom-6 right-6 z-50 bg-[var(--accent)] text-white p-4 rounded-full shadow-2xl active:scale-95 transition-transform">
     📚
 </button>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var article = document.getElementById('articulo-proyecto');
+    var tocList = document.getElementById('toc-secciones');
+    var tocWrapper = document.getElementById('toc-wrapper');
+    if (!article || !tocList) return;
+
+    var headings = article.querySelectorAll('h2[id], h3[id]');
+    if (headings.length < 2) return;
+
+    var currentSubList = null;
+
+    headings.forEach(function (heading) {
+        var link = document.createElement('a');
+        link.href = '#' + heading.id;
+        link.textContent = heading.textContent;
+        link.className = 'block leading-snug text-[var(--text-main)] opacity-60 hover:opacity-100 hover:text-[var(--accent)] transition-all';
+
+        var item = document.createElement('li');
+
+        if (heading.tagName === 'H2') {
+            link.classList.add('text-sm');
+            item.appendChild(link);
+            tocList.appendChild(item);
+            currentSubList = document.createElement('ul');
+            currentSubList.className = 'mt-2 ml-3 space-y-2 border-l border-theme pl-3';
+            item.appendChild(currentSubList);
+        } else if (currentSubList) {
+            link.classList.add('text-xs');
+            item.appendChild(link);
+            currentSubList.appendChild(item);
+        }
+    });
+
+    tocWrapper.classList.remove('hidden');
+});
+</script>

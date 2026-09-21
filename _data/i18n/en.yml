@@ -39,6 +39,7 @@ investigacion:
   default_status: "In progress"
   default_description: "Ongoing research on advanced models and scientific computing."
   modulos_proyecto: "Project modules"
+  en_esta_pagina: "On this page"
 
 nav_tabs:
   enfoque: "Focus"
