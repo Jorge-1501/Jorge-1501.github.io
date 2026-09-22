@@ -1,0 +1,23 @@
+{% comment %}
+  Language toggle: page.lang_alt_url > mirrored URL (/X <-> /en/X) if it exists > fallback.
+{% endcomment %}
+{% if page.lang == "en" %}
+    {% assign lang_alt_fallback = include.fallback_es | default: "/" %}
+    {% assign lang_alt_candidate = page.url | remove_first: "/en" %}
+{% else %}
+    {% assign lang_alt_fallback = include.fallback_en | default: "/en/" %}
+    {% assign lang_alt_candidate = "/en" | append: page.url %}
+{% endif %}
+{% assign lang_alt_candidate_alt = lang_alt_candidate | replace: "/index.html", "/" %}
+{% assign lang_alt_url = page.lang_alt_url %}
+{% unless lang_alt_url %}
+    {% assign lang_alt_url = lang_alt_fallback %}
+    {% assign lang_alt_match = site.pages | where: "url", lang_alt_candidate | first %}
+    {% unless lang_alt_match %}{% assign lang_alt_match = site.pages | where: "url", lang_alt_candidate_alt | first %}{% endunless %}
+    {% unless lang_alt_match %}{% assign lang_alt_match = site.documents | where: "url", lang_alt_candidate | first %}{% endunless %}
+    {% if lang_alt_match %}{% assign lang_alt_url = lang_alt_match.url %}{% endif %}
+{% endunless %}
+<a href="{{ lang_alt_url | relative_url }}"
+   class="text-[10px] mono font-bold border border-[var(--text-main)] px-3 py-1 hover:bg-[var(--text-main)] hover:text-[var(--bg-color)] transition-all">
+    {% include t.html section="nav" key="lang_switch" %}
+</a>

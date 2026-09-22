@@ -17,13 +17,8 @@
 
     <main class="flex-1 transition-all duration-500">
 
-        {% assign lang_alt_fallback = "/en/" %}
-        {% if page.lang == "en" %}{% assign lang_alt_fallback = "/" %}{% endif %}
         <header class="h-16 flex justify-end items-center px-12 border-b border-theme sticky top-0 bg-[var(--header-bg)] backdrop-blur-md z-40 transition-colors duration-300">
-            <a href="{{ page.lang_alt_url | default: lang_alt_fallback | relative_url }}"
-               class="text-[10px] mono font-bold border border-[var(--text-main)] px-3 py-1 hover:bg-[var(--text-main)] hover:text-[var(--bg-color)] transition-all">
-                {% include t.html section="nav" key="lang_switch" %}
-            </a>
+            {% include lang-switch.html %}
         </header>
 
         {{ content }}
