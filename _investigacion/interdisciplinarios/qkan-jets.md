@@ -86,7 +86,7 @@ El circuito sigue cinco principios de diseño:
 
 1. **Data re-uploading**: cada función univariada de una arista se modela mediante rotaciones repetidas del dato de entrada, en lugar de codificarlo una sola vez.
 2. La capa oculta clásica decide qué variables importan y cuántos qubits se usan, el circuito hereda la topología.
-3. **La suma es gratuita**: rotaciones $R_Z$ consecutivas en el mismo cable acumulan sus ángulos, así que los nodos de suma no requieren ninguna puerta de dos qubits.
+3. **La suma**: rotaciones $R_Z$ consecutivas en el mismo cable acumulan sus ángulos, así que los nodos de suma no requieren ninguna puerta de dos qubits.
 4. La **multiplicación** se implementa con una puerta `IsingZZ` combinada con un `CNOT`.
 5. Toda la información colapsa en un solo cable de salida, y la predicción es el valor esperado de Pauli-Z de un único qubit.
 

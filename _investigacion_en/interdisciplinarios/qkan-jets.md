@@ -87,7 +87,7 @@ The circuit follows five design principles:
 
 1. **Data re-uploading**: each edge's univariate function is modeled through repeated rotations of the input data, rather than encoding it once.
 2. The classical hidden layer decides which variables matter and how many qubits are used, the circuit inherits the topology.
-3. **Summation is free**: consecutive $R_Z$ rotations on the same wire accumulate their angles, so sum nodes require no two-qubit gate at all.
+3. **Summation**: consecutive $R_Z$ rotations on the same wire accumulate their angles, so sum nodes require no two-qubit gate at all.
 4. **Multiplication** is implemented with an `IsingZZ` gate combined with a `CNOT`.
 5. All information collapses onto a single output wire, and the prediction is the Pauli-Z expectation value of a single qubit.
 
