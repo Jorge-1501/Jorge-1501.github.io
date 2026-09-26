@@ -44,7 +44,9 @@
     /* Tipografía de artículos (proyecto-layout, contenido Markdown) */
     .article-content {
         color: var(--text-muted);
+        font-size: 1.0625rem;
         line-height: 1.75;
+        overflow-wrap: break-word;
     }
 
     .article-content > h1:first-child {
@@ -67,23 +69,40 @@
     }
 
     .article-content h2 {
-        font-size: 1.65rem;
+        font-size: 1.5rem;
         font-weight: 700;
         color: var(--text-main);
-        line-height: 1.25;
-        margin-top: 3rem;
-        margin-bottom: 1rem;
+        line-height: 1.3;
+        letter-spacing: -0.01em;
+        margin-top: 3.5rem;
+        margin-bottom: 1.25rem;
+        padding-top: 1.75rem;
+        border-top: 1px solid var(--border);
     }
 
     .article-content h3 {
-        font-size: 1.2rem;
+        font-size: 1.15rem;
         font-weight: 600;
         color: var(--text-main);
-        margin-top: 2rem;
+        line-height: 1.35;
+        margin-top: 2.25rem;
         margin-bottom: 0.75rem;
     }
 
+    /* Evita doble línea cuando un h2 sigue directamente a un separador */
+    .article-content hr + h2 { border-top: none; padding-top: 0; margin-top: 0; }
+
+    .article-content h2, .article-content h3 { scroll-margin-top: 8.5rem; }
+
     .article-content p { margin-bottom: 1.25rem; }
+
+    /* Ecuaciones MathJax en bloque: scroll horizontal en pantallas angostas */
+    .article-content mjx-container[display="true"] {
+        overflow-x: auto;
+        overflow-y: hidden;
+        max-width: 100%;
+        padding: 0.25rem 0;
+    }
 
     .article-content a {
         color: var(--accent);
@@ -142,12 +161,13 @@
         margin: 0;
     }
     .article-content figcaption {
-        font-size: 0.875rem;
+        font-size: 0.85rem;
         font-style: italic;
         color: var(--text-muted);
         margin-top: 0.75rem;
         text-align: center;
-        line-height: 1.4;
+        line-height: 1.5;
+        max-width: 90%;
     }
     html[lang="es"] .article-content figcaption::before {
         content: "Figura " counter(figure-counter) ": ";
@@ -161,7 +181,46 @@
     }
     .article-content hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
 
-    .article-content table { width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; font-size: 0.9rem; }
-    .article-content th, .article-content td { border: 1px solid var(--border); padding: 0.5rem 0.75rem; text-align: left; }
-    .article-content th { background: color-mix(in srgb, var(--text-main) 6%, transparent); font-weight: 700; }
+    /* Tablas: scroll horizontal en móvil, cifras alineadas y filas alternas */
+    .article-content table {
+        display: block;
+        width: 100%;
+        max-width: 100%;
+        overflow-x: auto;
+        border-collapse: collapse;
+        margin: 1.75rem 0 2rem;
+        font-size: 0.875rem;
+        font-variant-numeric: tabular-nums;
+        line-height: 1.45;
+    }
+    .article-content th, .article-content td { border-bottom: 1px solid var(--border); padding: 0.55rem 0.85rem; text-align: left; }
+    .article-content th {
+        background: color-mix(in srgb, var(--text-main) 6%, transparent);
+        color: var(--text-main);
+        font-weight: 700;
+        border-bottom: 2px solid color-mix(in srgb, var(--text-main) 20%, transparent);
+        white-space: nowrap;
+    }
+    .article-content td:not(:first-child) { white-space: nowrap; }
+    .article-content tbody tr:nth-child(even) { background: color-mix(in srgb, var(--text-main) 3%, transparent); }
+
+    /* Bibliografía numerada */
+    .article-content ol.references {
+        list-style: decimal;
+        margin: 1rem 0 2rem 0;
+        padding-left: 2rem;
+        font-size: 0.875rem;
+        line-height: 1.55;
+    }
+    .article-content ol.references li {
+        margin-bottom: 0.85rem;
+        padding-left: 0.35rem;
+        word-break: break-word;
+    }
+    .article-content ol.references li::marker {
+        color: var(--text-main);
+        font-weight: 700;
+        font-variant-numeric: tabular-nums;
+    }
+    .article-content ol.references + p { font-size: 0.85rem; opacity: 0.85; }
 </style>
